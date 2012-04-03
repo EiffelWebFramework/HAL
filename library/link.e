@@ -10,7 +10,7 @@ note
       				{ "href": "/product/832", "title": "Hover donkey" }
     				]
 			}
-		
+
 	]"
 	author: ""
 	date: "$Date$"
@@ -25,33 +25,36 @@ create
 	make_with_list
 
 feature {NONE} -- Initialization
+
 	make (a_rel : STRING)
 		do
-			set_rel(a_rel)
-			create {ARRAYED_LIST[LINK_ATTRIBUTE]} attributes.make(2)
+			set_rel (a_rel)
+			create {ARRAYED_LIST [LINK_ATTRIBUTE]} attributes.make(2)
 		end
 
-	make_with_attribute (a_rel : STRING; an_attribute : LINK_ATTRIBUTE)
+	make_with_attribute (a_rel: STRING; an_attribute: LINK_ATTRIBUTE)
 		do
-			set_rel(a_rel)
-			create {ARRAYED_LIST[LINK_ATTRIBUTE]} attributes.make(1)
+			set_rel (a_rel)
+			create {ARRAYED_LIST [LINK_ATTRIBUTE]} attributes.make (1)
 			attributes.force (an_attribute)
 		end
 
 
-	make_with_list (a_rel : STRING; array_attributes : ARRAY[LINK_ATTRIBUTE])
+	make_with_list (a_rel : STRING; array_attributes : ARRAY [LINK_ATTRIBUTE])
 		do
-			set_rel(a_rel)
-			create {ARRAYED_LIST[LINK_ATTRIBUTE]} attributes.make_from_array(array_attributes)
+			set_rel (a_rel)
+			create {ARRAYED_LIST [LINK_ATTRIBUTE]} attributes.make_from_array(array_attributes)
 		end
 
-feature -- Access	
+feature -- Access
+
 	rel:STRING
-	attributes : LIST [LINK_ATTRIBUTE]
+
+	attributes: LIST [LINK_ATTRIBUTE]
 
 feature -- Element change
 
-	set_rel (a_rel:STRING)
+	set_rel (a_rel: STRING)
 			-- Set rel with `a_rel'
 		do
 			rel := a_rel

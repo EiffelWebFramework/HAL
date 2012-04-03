@@ -9,25 +9,31 @@ note
 
 class
 	JSON_HAL_RESOURCE_CONVERTER
+
 inherit
 	JSON_CONVERTER
+
 create
 	make
+
 feature -- Initialization
+
 	make
 		do
 			create object.make
 		end
-feature	 -- Access
-	object : RESOURCE
-	value : detachable JSON_OBJECT
 
-	from_json (j: attached  like value): detachable like object
+feature	 -- Access
+
+	object: RESOURCE
+	value: detachable JSON_OBJECT
+
+	from_json (j: attached like value): detachable like object
             -- Convert from JSON value. Returns Void if unable to convert
        local
-       		l_list : LIST[like object]
-       		j_array, l_embedded_keys : ARRAY [JSON_STRING]
-       		i,k,l : INTEGER
+       		l_list: LIST [like object]
+       		j_array, l_embedded_keys: ARRAY [JSON_STRING]
+       		i,k,l: INTEGER
         do
         	--| TODO: Refactor to make it simpler
         	create Result.make
@@ -37,9 +43,9 @@ feature	 -- Access
             until
             	i > j_array.count
             loop
-            	if not (j_array.at (i).is_equal (links_key) or  j_array.at (i).is_equal (embedded_key)) then
-					if attached  j.item (j_array.at (i)) as l_rep then
-						Result.add_properties (j_array.at (i).item, l_rep.representation)
+            	if not (j_array [i].is_equal (links_key) or  j_array [i].is_equal (embedded_key)) then
+					if attached  j.item (j_array [i]) as l_rep then
+						Result.add_properties (j_array [i].item, l_rep.representation)
 					end
             	end
             	i := i + 1
@@ -54,14 +60,14 @@ feature	 -- Access
             	until
             		k > l_embedded_keys.count
             	loop
-            		if attached {JSON_OBJECT} ll_embedded.item (l_embedded_keys.at (k)) as jo then
-						create {ARRAYED_LIST[like object]}l_list.make(1)
+            		if attached {JSON_OBJECT} ll_embedded.item (l_embedded_keys [k]) as jo then
+						create {ARRAYED_LIST [like object]} l_list.make(1)
 						if attached from_json (jo) as jo_r then
 							l_list.force (jo_r)
-							Result.add_embedded(l_embedded_keys.at (k).item, l_list)
+							Result.add_embedded(l_embedded_keys [k].item, l_list)
 						end
-					elseif attached {JSON_ARRAY} ll_embedded.item (l_embedded_keys.at (k)) as jea then
-                      create {ARRAYED_LIST[like object]}l_list.make(jea.count)
+					elseif attached {JSON_ARRAY} ll_embedded.item (l_embedded_keys [k]) as jea then
+                      create {ARRAYED_LIST [like object]} l_list.make (jea.count)
                       from
                       	l := 1
                       until
@@ -74,22 +80,18 @@ feature	 -- Access
 						end
                         l := l + 1
                       end
-                   	  	Result.add_embedded(l_embedded_keys.at (k).item, l_list)
+                   	  	Result.add_embedded(l_embedded_keys [k].item, l_list)
             		end
-            	  k := k + 1
+            	    k := k + 1
             	end
             end
 		 end
 
     to_json (o: like object): like value
             -- Convert to JSON value
-        local
-        	ja : JSON_ARRAY
-        	l : LINK
-        	jv: JSON_OBJECT
         do
         	create Result.make
-            Result.put (to_json_links (o.links),links_key)
+            Result.put (to_json_links (o.links), links_key)
 			if attached o.embedded_resource as l_embedded_resource then
 				Result.put (to_json_embedded_resource (l_embedded_resource),embedded_key)
 			end
@@ -105,7 +107,7 @@ feature	 -- Access
 			end
         end
 
-	to_json_embedded_resource ( an_embedded_resource : HASH_TABLE[LIST[RESOURCE],STRING]) : JSON_OBJECT
+	to_json_embedded_resource ( an_embedded_resource : HASH_TABLE [LIST [RESOURCE], STRING]) : JSON_OBJECT
 		do
 			create Result.make
 			from
@@ -118,9 +120,8 @@ feature	 -- Access
 			end
 		end
 
-	to_json_embedded_resource_internal ( e_resource : LIST[RESOURCE]) : JSON_VALUE
+	to_json_embedded_resource_internal ( e_resource : LIST [RESOURCE]) : JSON_VALUE
 		local
-			l_result_obj : JSON_OBJECT
 			l_result_arr : JSON_ARRAY
 		do
 			if e_resource.count = 1 then
@@ -145,7 +146,7 @@ feature	 -- Access
 		end
 
 
-	to_json_links ( a_links : HASH_TABLE[LINK,STRING]) : JSON_OBJECT
+	to_json_links ( a_links : HASH_TABLE [LINK, STRING]) : JSON_OBJECT
 		do
 			create Result.make
 			from
@@ -160,13 +161,12 @@ feature	 -- Access
 		end
 
 
-	to_json_link_internal ( a_link : LINK) : JSON_VALUE
+	to_json_link_internal (a_link : LINK) : JSON_VALUE
 		local
-			l_result_obj : JSON_OBJECT
 			l_result_arr : JSON_ARRAY
 		do
 			if a_link.attributes.count = 1 then
-				Result := to_json_link_attribute (a_link.attributes.at (1))
+				Result := to_json_link_attribute (a_link.attributes.first)
 			else
 				create {JSON_ARRAY} l_result_arr.make_array
 				from
@@ -174,14 +174,14 @@ feature	 -- Access
 				until
 					a_link.attributes.after
 				loop
-					l_result_arr.add(to_json_link_attribute(a_link.attributes.item_for_iteration))
+					l_result_arr.add (to_json_link_attribute (a_link.attributes.item_for_iteration))
 					a_link.attributes.forth
 				end
 				Result := l_result_arr
 			end
 		end
 
-	to_json_link_attribute ( a_link_attribute : LINK_ATTRIBUTE):JSON_OBJECT
+	to_json_link_attribute ( a_link_attribute : LINK_ATTRIBUTE): JSON_OBJECT
 		do
 			create Result.make
 			Result.put (json.value (a_link_attribute.href), href_key)
@@ -189,18 +189,18 @@ feature	 -- Access
 				Result.put (json.value (a_link_attribute.href), name_key)
 			end
 			if attached a_link_attribute.hreflang as l_hreflang then
-				Result.put (json.value (a_link_attribute.hreflang),hreflang_key)
+				Result.put (json.value (a_link_attribute.hreflang), hreflang_key)
 			end
 			if attached a_link_attribute.title as l_title then
-				Result.put (json.value (a_link_attribute.title),title_key)
+				Result.put (json.value (a_link_attribute.title), title_key)
 			end
 
 		end
 
 
-	from_json_link (j: attached  like value) : HASH_TABLE[LINK, STRING]
+	from_json_link (j: attached like value) : HASH_TABLE [LINK, STRING]
 		local
-			l_keys : ARRAY[JSON_STRING]
+			l_keys : ARRAY [JSON_STRING]
 			i,k : INTEGER
 			l_link : LINK
 		do
@@ -211,13 +211,13 @@ feature	 -- Access
 		   until
 		   	 i > l_keys.count
 		   loop
-		 	 if attached {JSON_OBJECT} j.item (l_keys.at (i)) as jo then
+		 	 if attached {JSON_OBJECT} j.item (l_keys [i]) as jo then
 		 	 	if attached create_link_attributes (jo) as la then
-					 	create l_link.make_with_attribute (l_keys.at (i).item, la)
-		 	 			Result.force (l_link, l_keys.at (i).item)
+					 	create l_link.make_with_attribute (l_keys [i].item, la)
+		 	 			Result.force (l_link, l_keys [i].item)
 		 	 	end
-		 	 elseif attached {JSON_ARRAY} j.item (l_keys.at (i)) as ja then
-				create l_link.make (l_keys.at (i).item)
+		 	 elseif attached {JSON_ARRAY} j.item (l_keys [i]) as ja then
+				create l_link.make (l_keys [i].item)
 				from
 					k := 1
 				until
@@ -230,38 +230,33 @@ feature	 -- Access
 					end
 					k := k + 1
 				end
-				Result.force (l_link, l_keys.at (i).item)
+				Result.force (l_link, l_keys [i].item)
 		 	 end
 		 	 i := i +1
 		   end
           end
 
 
-	create_link_attributes (j: attached  JSON_OBJECT) : detachable LINK_ATTRIBUTE
+	create_link_attributes (j: JSON_OBJECT) : detachable LINK_ATTRIBUTE
 			-- create an object LINK_ATTRIBUTE from a JSON_OBJECT
-		local
-			href: STRING
-			name : detachable STRING
-			title: detachable STRING
-			hreflang : detachable STRING
 		do
 		    --|TODO refactor to make it simpler
-			if attached {JSON_STRING} j.item (href_key) as js1 then
-				create Result.make (js1.item)
-				if attached {JSON_STRING} j.item (name_key) as js2 then
-					Result.set_name (js2.item)
+			if attached {JSON_STRING} j.item (href_key) as j_href then
+				create Result.make (j_href.item)
+				if attached {JSON_STRING} j.item (name_key) as j_name then
+					Result.set_name (j_name.item)
 				end
-				if attached {JSON_STRING} j.item (title_key) as js3 then
-					Result.set_title (js3.item)
+				if attached {JSON_STRING} j.item (title_key) as j_title then
+					Result.set_title (j_title.item)
 				end
-				if attached {JSON_STRING} j.item (hreflang_key) as js4 then
-					Result.set_hreflang (js4.item)
+				if attached {JSON_STRING} j.item (hreflang_key) as j_hreflang then
+					Result.set_hreflang (j_hreflang.item)
 				end
 			end
 		end
 
- feature {NONE} -- Implementation
--- RESOURCE	
+feature {NONE} -- Implementation: RESOURCE	
+
 	links_key: JSON_STRING
         once
             create Result.make_json ("_links")
@@ -272,7 +267,8 @@ feature	 -- Access
             create Result.make_json ("_embedded")
         end
 
--- LINK LINK_ATTRIBUTE
+feature {NONE} -- Implementation: LINK
+
 	href_key: JSON_STRING
         once
             create Result.make_json ("href")
@@ -283,6 +279,7 @@ feature	 -- Access
     		create Result.make_json ("ref")
     	end
 
+feature {NONE} -- Implementation: LINK_ATTRIBUTE
 
 	name_key : JSON_STRING
 
