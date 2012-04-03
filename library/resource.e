@@ -17,6 +17,7 @@ feature {NONE} -- Initialization
 	make
 		do
 			create links.make (10)
+			links.compare_objects
 		end
 
 	make_with_link ( a_link : LINK )
@@ -71,7 +72,7 @@ feature -- Element Change
 	is_valid_resource : BOOLEAN
 			-- Does this resource contains a self link?
 		do
-			Result := links.has_key ("_self")
+			Result := links.has_key ("self")
 		end
 
 end
