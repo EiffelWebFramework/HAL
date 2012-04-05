@@ -107,6 +107,7 @@ feature	 -- Access
 			end
         end
 
+feature {NONE} -- Converter implementation
 	to_json_embedded_resource ( an_embedded_resource : HASH_TABLE [LIST [HAL_RESOURCE], STRING]) : JSON_OBJECT
 		do
 			create Result.make

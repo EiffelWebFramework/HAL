@@ -3,6 +3,7 @@ note
 	author: ""
 	date: "$Date$"
 	revision: "$Revision$"
+	specification:"http://stateless.co/hal_specification.html"
 
 class
 	HAL_RESOURCE
@@ -166,8 +167,12 @@ feature -- Status Report
 
 feature {JSON_HAL_RESOURCE_CONVERTER}-- Implementation
 	links : HASH_TABLE[HAL_LINK,STRING]
+
 	embedded_resource : detachable HASH_TABLE[LIST[HAL_RESOURCE],STRING]
+		--expressing the embedded nature of a given part of the representation.
+
 	properties : detachable HASH_TABLE[STRING,STRING]
+	 	--expressing 'outbound' hyperlinks to other, related URIs.
 
 end
 
