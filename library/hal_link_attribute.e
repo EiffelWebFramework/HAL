@@ -5,7 +5,7 @@ note
 	revision: "$Revision$"
 
 class
-	LINK_ATTRIBUTE
+	HAL_LINK_ATTRIBUTE
 
 create
 	make

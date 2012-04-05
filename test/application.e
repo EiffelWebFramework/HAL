@@ -34,10 +34,19 @@ feature {NONE} -- Initialization
 			json.add_converter (hal)
 			if attached json_file_from ("hal_example.json") as json_file then
 				if attached {JSON_OBJECT} json_value_from_file (json_file) as jo then
-					if attached {RESOURCE} json.object (jo, "RESOURCE") as r then
+					if attached {HAL_RESOURCE} json.object (jo, "HAL_RESOURCE") as r then
 						print (r.out)
 						if attached json.value (r) as jv then
 							 print (jv.representation)
+						end
+						if attached r.self as l_link then
+						 	print (l_link.out)
+						end
+						if attached r.links_keys as lk then
+							print (lk.out)
+						end
+						if attached r.links_by_key ("next") as ln then
+							check ln.rel ~ "next" end
 						end
 					end
 				end

@@ -25,7 +25,7 @@ feature -- Initialization
 
 feature	 -- Access
 
-	object: RESOURCE
+	object: HAL_RESOURCE
 	value: detachable JSON_OBJECT
 
 	from_json (j: attached like value): detachable like object
@@ -107,7 +107,7 @@ feature	 -- Access
 			end
         end
 
-	to_json_embedded_resource ( an_embedded_resource : HASH_TABLE [LIST [RESOURCE], STRING]) : JSON_OBJECT
+	to_json_embedded_resource ( an_embedded_resource : HASH_TABLE [LIST [HAL_RESOURCE], STRING]) : JSON_OBJECT
 		do
 			create Result.make
 			from
@@ -120,7 +120,7 @@ feature	 -- Access
 			end
 		end
 
-	to_json_embedded_resource_internal ( e_resource : LIST [RESOURCE]) : JSON_VALUE
+	to_json_embedded_resource_internal ( e_resource : LIST [HAL_RESOURCE]) : JSON_VALUE
 		local
 			l_result_arr : JSON_ARRAY
 		do
@@ -146,7 +146,7 @@ feature	 -- Access
 		end
 
 
-	to_json_links ( a_links : HASH_TABLE [LINK, STRING]) : JSON_OBJECT
+	to_json_links ( a_links : HASH_TABLE [HAL_LINK, STRING]) : JSON_OBJECT
 		do
 			create Result.make
 			from
@@ -161,7 +161,7 @@ feature	 -- Access
 		end
 
 
-	to_json_link_internal (a_link : LINK) : JSON_VALUE
+	to_json_link_internal (a_link : HAL_LINK) : JSON_VALUE
 		local
 			l_result_arr : JSON_ARRAY
 		do
@@ -181,7 +181,7 @@ feature	 -- Access
 			end
 		end
 
-	to_json_link_attribute ( a_link_attribute : LINK_ATTRIBUTE): JSON_OBJECT
+	to_json_link_attribute ( a_link_attribute : HAL_LINK_ATTRIBUTE): JSON_OBJECT
 		do
 			create Result.make
 			Result.put (json.value (a_link_attribute.href), href_key)
@@ -198,11 +198,11 @@ feature	 -- Access
 		end
 
 
-	from_json_link (j: attached like value) : HASH_TABLE [LINK, STRING]
+	from_json_link (j: attached like value) : HASH_TABLE [HAL_LINK, STRING]
 		local
 			l_keys : ARRAY [JSON_STRING]
 			i,k : INTEGER
-			l_link : LINK
+			l_link : HAL_LINK
 		do
 		   create Result.make(2)
 		   from
@@ -237,7 +237,7 @@ feature	 -- Access
           end
 
 
-	create_link_attributes (j: JSON_OBJECT) : detachable LINK_ATTRIBUTE
+	create_link_attributes (j: JSON_OBJECT) : detachable HAL_LINK_ATTRIBUTE
 			-- create an object LINK_ATTRIBUTE from a JSON_OBJECT
 		do
 		    --|TODO refactor to make it simpler

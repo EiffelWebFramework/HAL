@@ -17,7 +17,7 @@ note
 	revision: "$Revision$"
 	description :"http://blog.stateless.co/post/13296666138/json-linking-with-hal"
 class
-	LINK
+	HAL_LINK
 
 create
 	make,
@@ -29,28 +29,28 @@ feature {NONE} -- Initialization
 	make (a_rel : STRING)
 		do
 			set_rel (a_rel)
-			create {ARRAYED_LIST [LINK_ATTRIBUTE]} attributes.make(2)
+			create {ARRAYED_LIST [HAL_LINK_ATTRIBUTE]} attributes.make(2)
 		end
 
-	make_with_attribute (a_rel: STRING; an_attribute: LINK_ATTRIBUTE)
+	make_with_attribute (a_rel: STRING; an_attribute: HAL_LINK_ATTRIBUTE)
 		do
 			set_rel (a_rel)
-			create {ARRAYED_LIST [LINK_ATTRIBUTE]} attributes.make (1)
+			create {ARRAYED_LIST [HAL_LINK_ATTRIBUTE]} attributes.make (1)
 			attributes.force (an_attribute)
 		end
 
 
-	make_with_list (a_rel : STRING; array_attributes : ARRAY [LINK_ATTRIBUTE])
+	make_with_list (a_rel : STRING; array_attributes : ARRAY [HAL_LINK_ATTRIBUTE])
 		do
 			set_rel (a_rel)
-			create {ARRAYED_LIST [LINK_ATTRIBUTE]} attributes.make_from_array(array_attributes)
+			create {ARRAYED_LIST [HAL_LINK_ATTRIBUTE]} attributes.make_from_array(array_attributes)
 		end
 
 feature -- Access
 
 	rel:STRING
 
-	attributes: LIST [LINK_ATTRIBUTE]
+	attributes: LIST [HAL_LINK_ATTRIBUTE]
 
 feature -- Element change
 
@@ -62,7 +62,7 @@ feature -- Element change
 			assigned: rel ~ a_rel
 		end
 
-	add_attribute (an_attribute : LINK_ATTRIBUTE)
+	add_attribute (an_attribute : HAL_LINK_ATTRIBUTE)
 		do
 			attributes.force (an_attribute)
 		end

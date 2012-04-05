@@ -31,8 +31,40 @@ feature {NONE} -- Events
 
 feature -- Test routines
 
-	test_min_hal
+	test_valid_hal
     		--
+		local
+			l_res : detachable HAL_RESOURCE
+		do
+			l_res := json_to_resource ("min_hal.json")
+			assert("Not Void", l_res /= Void)
+			if attached l_res as l_r then
+				assert("Is Valid Resource", l_r.is_valid_resource = True)
+			end
+		end
+
+
+	test_self
+		local
+			l_res : detachable HAL_RESOURCE
+		do
+			l_res := json_to_resource ("min_hal.json")
+			assert("Not Void", l_res /= Void)
+			if attached l_res as ll_res then
+				if attached{HAL_LINK} ll_res.self as l_link then
+					assert ("Rel attribute is self", l_link.rel ~ "self" )
+					assert ("Has 1 element", l_link.attributes.count = 1 )
+					assert ("Has href",l_link.attributes.at (1).href ~ "http://example.com/")
+				end
+			end
+		end
+
+
+
+
+
+feature {NONE} -- Implementation
+	json_to_resource (fn : STRING) : detachable HAL_RESOURCE
 		local
 			parse_json: like new_json_parser
 			hal: JSON_HAL_RESOURCE_CONVERTER
@@ -42,15 +74,12 @@ feature -- Test routines
 			if attached json_file_from ("min_hal.json") as json_file then
 				parse_json := new_json_parser (json_file)
 				if attached parse_json.parse_json as jv then
-					if attached {RESOURCE} json.object (jv, "RESOURCE") as l_r then
-						assert("Is Valid Resource", l_r.is_valid_resource = True)
+					if attached {HAL_RESOURCE} json.object (jv, "HAL_RESOURCE") as l_hal then
+						Result := l_hal
 					end
 				end
 			end
 		end
-
-
-feature {NONE} -- Implementation
 
 	json_value: detachable JSON_VALUE
 
