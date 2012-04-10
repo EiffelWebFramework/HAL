@@ -60,6 +60,75 @@ feature -- Test routines
 		end
 
 
+	test_links_key
+		local
+			l_res : detachable HAL_RESOURCE
+			l_arr : ARRAY[STRING]
+		do
+			l_res := json_to_resource ("hal_example.json")
+			assert("Not Void", l_res /= Void)
+			if attached{HAL_RESOURCE} l_res as ll_res then
+				l_arr := ll_res.links_keys
+				l_arr.compare_objects
+				assert ("Has three elements", l_arr.count = 3 )
+				assert ("Has element self", l_arr.has ("self") = True)
+				assert ("Has element next", l_arr.has ("next") = True)
+				assert ("Has element searcg", l_arr.has ("search") = True)
+			end
+		end
+
+
+	test_links_by_key
+		local
+			l_res : detachable HAL_RESOURCE
+			l_arr : ARRAY[STRING]
+		do
+			l_res := json_to_resource ("hal_example.json")
+			assert("Not Void", l_res /= Void)
+			if attached{HAL_RESOURCE} l_res as ll_res then
+				assert ("Expected Void",ll_res.links_by_key ("keynotexist") = Void)
+				if attached {HAL_LINK} ll_res.links_by_key ("next") as ll_link then
+					assert ("Expected rel : next", ll_link.rel ~ "next")
+					assert ("Expected shared links 1", ll_link.attributes.count = 1)
+					assert ("Expected Href value", ll_link.attributes.at (1).href ~ "/orders?page=2" )
+				end
+			end
+		end
+
+
+
+
+	test_embedded_resources_key
+		local
+			l_res : detachable HAL_RESOURCE
+		do
+			l_res := json_to_resource ("hal_example.json")
+			assert("Not Void", l_res /= Void)
+			if attached {HAL_RESOURCE} l_res as ll_res then
+				if attached {ARRAY[STRING]} ll_res.embedded_resources_keys as ll_arr then
+					ll_arr.compare_objects
+					assert ("Number of elements 1", ll_arr.count = 1)
+					assert ("Has element order",ll_arr.has ("order"))
+				end
+			end
+		end
+
+
+	test_embedded_resource_by_key
+		local
+			l_res : detachable HAL_RESOURCE
+		do
+			l_res := json_to_resource ("hal_example.json")
+			assert("Not Void", l_res /= Void)
+			if attached {HAL_RESOURCE} l_res as ll_res then
+				if attached {LIST[HAL_RESOURCE]} ll_res.embedded_resources_by_key ("order") as l_list then
+					l_list.compare_objects
+					assert ("Number of elements 2", l_list.count = 2)
+				end
+			end
+		end
+
+
 
 
 
@@ -71,7 +140,7 @@ feature {NONE} -- Implementation
 		do
 			create hal.make
 			json.add_converter (hal)
-			if attached json_file_from ("min_hal.json") as json_file then
+			if attached json_file_from (fn) as json_file then
 				parse_json := new_json_parser (json_file)
 				if attached parse_json.parse_json as jv then
 					if attached {HAL_RESOURCE} json.object (jv, "HAL_RESOURCE") as l_hal then
