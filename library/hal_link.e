@@ -27,10 +27,10 @@ create
 
 feature {NONE} -- Initialization
 
-	make (a_rel : STRING)
+	make (a_rel: STRING)
 		do
 			set_rel (a_rel)
-			create {ARRAYED_LIST [HAL_LINK_ATTRIBUTE]} attributes.make(2)
+			create {ARRAYED_LIST [HAL_LINK_ATTRIBUTE]} attributes.make (2)
 		end
 
 	make_with_attribute (a_rel: STRING; an_attribute: HAL_LINK_ATTRIBUTE)
@@ -41,28 +41,28 @@ feature {NONE} -- Initialization
 		end
 
 
-	make_with_list (a_rel : STRING; array_attributes : ARRAY [HAL_LINK_ATTRIBUTE])
+	make_with_list (a_rel: STRING; an_array_attributes: ARRAY [HAL_LINK_ATTRIBUTE])
 		do
 			set_rel (a_rel)
-			create {ARRAYED_LIST [HAL_LINK_ATTRIBUTE]} attributes.make_from_array(array_attributes)
+			create {ARRAYED_LIST [HAL_LINK_ATTRIBUTE]} attributes.make_from_array (an_array_attributes)
 		end
 
 feature -- Access
 
-	rel:STRING
-		--@rel
-		--REQUIRED
-		--For identifying how the target URI relates to the 'Subject Resource'.
-		--The Subject Resource is the closest parent Resource element.
-		--This attribute is not a requirement for the root element of a HAL representation,
-		--as it has an implicit default value of 'self'
-		--@rel corresponds with the 'relation parameter' as defined in Web Linking [RFC 5988]
-		--@rel attribute SHOULD be used for identifying Resource and Link elements in a HAL representation.
+	rel: STRING
+			--@rel
+			--REQUIRED
+			--For identifying how the target URI relates to the 'Subject Resource'.
+			--The Subject Resource is the closest parent Resource element.
+			--This attribute is not a requirement for the root element of a HAL representation,
+			--as it has an implicit default value of 'self'
+			--@rel corresponds with the 'relation parameter' as defined in Web Linking [RFC 5988]
+			--@rel attribute SHOULD be used for identifying Resource and Link elements in a HAL representation.
 
 	attributes: LIST [HAL_LINK_ATTRIBUTE]
-		-- Multiple links can share the key (rel attribute)
-		-- attributes represent the following properties
-		--	href, name, title, hreflang
+			-- Multiple links can share the key (rel attribute)
+			-- attributes represent the following properties
+			--	href, name, title, hreflang
 
 feature -- Element change
 
@@ -78,4 +78,5 @@ feature -- Element change
 		do
 			attributes.force (an_attribute)
 		end
+
 end
