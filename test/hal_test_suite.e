@@ -81,7 +81,6 @@ feature -- Test routines
 	test_links_by_key
 		local
 			l_res : detachable HAL_RESOURCE
-			l_arr : ARRAY[STRING]
 		do
 			l_res := json_to_hal ("hal_example.json")
 			assert("Not Void", l_res /= Void)
@@ -130,14 +129,14 @@ feature -- Test routines
 
 
 
-	test_properties_keys
+	test_fields_keys
 		local
 			l_res : detachable HAL_RESOURCE
 		do
 			l_res := json_to_hal ("hal_multi_links.json")
 			assert("Not Void", l_res /= Void)
 			if attached {HAL_RESOURCE} l_res as ll_res then
-				if attached {ARRAY [STRING]} ll_res.properties_keys as l_arr then
+				if attached {ARRAY [STRING]} ll_res.fields_keys as l_arr then
 					l_arr.compare_objects
 					assert ("Number of elements 2", l_arr.count = 2)
 					assert ("Expected name ", l_arr[1] ~ "name")
@@ -148,17 +147,17 @@ feature -- Test routines
 
 
 
-	test_properties_by_key
+	test_fields_by_key
 		local
 			l_res : detachable HAL_RESOURCE
 		do
 			l_res := json_to_hal ("hal_multi_links.json")
 			assert("Not Void", l_res /= Void)
 			if attached {HAL_RESOURCE} l_res as ll_res then
-				if attached {STRING_32} ll_res.properties_by_key ("name") as l_str then
+				if attached {STRING_32} ll_res.fields_by_key ("name") as l_str then
 					assert ("Expected Value: A product", l_str.is_equal ("A product"))
 				end
-				if attached {STRING_32} ll_res.properties_by_key ("weight") as l_str then
+				if attached {STRING_32} ll_res.fields_by_key ("weight") as l_str then
 					assert ("Expected Value: A product", l_str.is_equal ("400"))
 				end
 			end
@@ -170,6 +169,15 @@ feature -- Test routines
 
 
 feature {NONE} -- Implementation
+	hal_to_json ( a_res : HAL_RESOURCE) : detachable JSON_VALUE
+		local
+				hal: JSON_HAL_RESOURCE_CONVERTER
+		do
+				create hal.make
+				json.add_converter (hal)
+				Result := json.value (a_res)
+		end
+
 	json_to_hal (fn : STRING) : detachable HAL_RESOURCE
 		local
 			parse_json: like new_json_parser
