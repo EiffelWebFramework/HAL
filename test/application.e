@@ -18,12 +18,76 @@ feature {NONE} -- Initialization
 		local
 --			hlink : LINK
 --			hresource : RESOURCE
+			order : ORDER
+			js_cc : JSON_CUSTOMER_CONVERTER
+			js_ic : JSON_ITEM_CONVERTER
+			js_li : JSON_LINE_ITEM_CONVERTER
+			js_oc : JSON_ORDER_CONVERTER
 		do
 			create file_reader
 --			test_json_min
 --			test_json_hal
 --			test_json_link
-			test_hal
+--			test_hal
+--			test_item_line_item
+			test_order
+		end
+
+
+	test_order
+		local
+			js_ic : JSON_ITEM_CONVERTER
+			js_li : JSON_LINE_ITEM_CONVERTER
+			js_cc : JSON_CUSTOMER_CONVERTER
+			js_oc : JSON_ORDER_CONVERTER
+			l_item : ITEM
+			line:LINE_ITEM
+			l_cust : CUSTOMER
+			l_order : ORDER
+		do
+			create js_ic.make
+			create js_li.make
+			create js_oc.make
+			create js_cc.make
+			json.add_converter (js_ic)
+			json.add_converter (js_li)
+			json.add_converter (js_oc)
+			json.add_converter (js_cc)
+
+			create line.make ("basket")
+			create l_item.make ("ABCD123", 2, 9.5)
+			line.add_item (l_item)
+			create l_item.make ("GFZ111", 1, 11)
+			line.add_item (l_item)
+
+
+			create l_cust.make ("Javier", "test@hal.com")
+			create l_order.make ("test", "USD", "Placed",l_cust)
+			l_order.add_item (l_item)
+
+			if attached {JSON_VALUE} json.value (l_order) as jv then
+				print (jv.representation)
+			end
+		end	test_item_line_item
+		local
+			js_ic : JSON_ITEM_CONVERTER
+			js_li : JSON_LINE_ITEM_CONVERTER
+			l_item : ITEM
+			line:LINE_ITEM
+		do
+			create js_ic.make
+			create js_li.make
+			json.add_converter (js_ic)
+			json.add_converter (js_li)
+			create line.make ("basket")
+			create l_item.make ("ABCD123", 2, 9.5)
+			line.add_item (l_item)
+			create l_item.make ("GFZ111", 1, 11)
+			line.add_item (l_item)
+
+			if attached {JSON_VALUE} json.value (line) as jv then
+				print (jv.representation)
+			end
 		end
 
 	test_hal

@@ -43,11 +43,11 @@ feature -- Status setting
             name := a_name
         end
 
-    add_book (an_item: ITEM)
+    add_item (an_item: ITEM)
         local
             l: detachable LIST [ITEM]
         do
-            if item_index.has (aN_item.id) then
+            if item_index.has (an_item.id) then
                 l := item_index.at ( an_item.id )
             else
                 create {LINKED_LIST [ITEM]} l.make
@@ -58,6 +58,19 @@ feature -- Status setting
             end
 
         end
+
+	add_items (item_list: like items)
+        do
+            from
+                item_list.start
+            until
+                item_list.after
+            loop
+                add_item (item_list.item)
+                item_list.forth
+            end
+        end
+
 
 feature {NONE} -- Implementation
 

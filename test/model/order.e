@@ -25,7 +25,7 @@ feature -- Access
 
 	total : REAL
 		do
-			if attached items as l_items then
+			if attached line_items.items as l_items then
 				across l_items as e loop
 					Result := Result + e.item.price
 				end
@@ -34,7 +34,7 @@ feature -- Access
 
 
 	id : INTEGER
-	name : STRING
+--	name : STRING
 	currency : STRING
 	status : STRING
 	placed : STRING
@@ -47,10 +47,10 @@ feature -- Element Change
 			id := an_id
 		end
 
-	set_name (a_name : STRING)
-		do
-			name := a_name
-		end
+--	set_name (a_name : STRING)
+--		do
+--			name := a_name
+--		end
 
 	set_currency (a_currency : STRING)
 		do
@@ -70,6 +70,11 @@ feature -- Element Change
 	set_customer (a_customer : CUSTOMER)
 		do
 			customer := a_customer
+		end
+
+	add_item (an_item : ITEM)
+		do
+			line_items.add_item(an_item)
 		end
 
 end
