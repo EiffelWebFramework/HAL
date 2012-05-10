@@ -49,13 +49,13 @@ feature -- Access
 					not (js.is_equal (links_key) or  js.is_equal (embedded_key)) and then
 					attached  j.item (js) as l_rep
 				then
-					Result.add_properties (js.item, l_rep.representation)
+					Result.add_fields (js.item, l_rep.representation)
 				end
 				i := i + 1
 			end
 
 			if attached {JSON_OBJECT} j.item (links_key) as ll_links then
-				Result.add_all_link (from_json_link (ll_links))
+				Result.add_all_links (from_json_link (ll_links))
 			end
 			if attached {JSON_OBJECT} j.item (embedded_key) as ll_embedded then
 				from
@@ -69,7 +69,7 @@ feature -- Access
 						create {ARRAYED_LIST [like object]} l_list.make (1)
 						if attached from_json (jo) as jo_r then
 							l_list.force (jo_r)
-							Result.add_embedded (js.item, l_list)
+							Result.add_embedded_resources_with_key (js.item, l_list)
 						end
 					elseif attached {JSON_ARRAY} ll_embedded.item (js) as jea then
 						create {ARRAYED_LIST [like object]} l_list.make (jea.count)
@@ -86,7 +86,7 @@ feature -- Access
 							end
 							l := l + 1
 						end
-						Result.add_embedded (js.item, l_list)
+						Result.add_embedded_resources_with_key (js.item, l_list)
 					end
 					k := k + 1
 				end
@@ -101,7 +101,7 @@ feature -- Access
 			if attached o.embedded_resource as l_embedded_resource then
 				Result.put (to_json_embedded_resource (l_embedded_resource), embedded_key)
 			end
-			if attached o.properties as l_properties then
+			if attached o.fields as l_properties then
 				from
 					l_properties.start
 				until
