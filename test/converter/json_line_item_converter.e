@@ -16,10 +16,7 @@ create
 feature {NONE} -- Initialization
 
 	make
-		local
-			ucs: STRING_32
 		do
-			create ucs.make_empty
 			create object.make ("")
 		end
 
