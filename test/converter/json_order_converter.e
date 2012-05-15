@@ -65,7 +65,7 @@ feature -- Conversion
 
 
 
-            check l_id /= Void end
+            check l_id > 0 end
             check l_currency /= Void end
             check l_status /= Void end
             check l_customer /= Void end

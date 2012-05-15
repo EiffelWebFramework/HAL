@@ -19,7 +19,7 @@ feature {NONE} -- Initialization
         local
             ucs: STRING_32
         do
-            create ucs.make_from_string ("")
+            create ucs.make_empty
 			create object.make ("")
         end
 
@@ -31,30 +31,31 @@ feature -- Conversion
 
     from_json (j: like to_json): detachable like object
         local
-            ucs: detachable STRING_32
             ll: LINKED_LIST [ITEM]
-            b: detachable ITEM
-            ja: detachable JSON_ARRAY
             i: INTEGER
         do
-            ucs ?= json.object (j.item (name_key), Void)
-            check ucs /= Void end
-            create Result.make (ucs)
-            ja ?= j.item (items_key)
-            check ja /= Void end
-            from
-                i := 1
-                create ll.make
-            until
-                i > ja.count
-            loop
-                b ?= json.object (ja [i], "ITEM")
-                check b /= Void end
-                ll.force (b)
-                i := i + 1
-            end
-            check ll /= Void end
-            Result.add_items (ll)
+        	if attached {STRING_32} json.object (j.item (name_key), Void) as ucs then
+        		if attached {JSON_ARRAY} j.item (items_key) as ja then
+
+		            create Result.make (ucs)
+		            from
+		                i := 1
+		                create ll.make
+		            until
+		                i > ja.count
+		            loop
+		            	if attached {ITEM} json.object (ja [i], "ITEM") as b then
+			                ll.force (b)
+			            end
+		                i := i + 1
+		            end
+		            Result.add_items (ll)
+		         else
+		         	check has_array_items: False end
+		         end
+	        else
+	        	check has_name_key: False end
+			end
         end
 
     to_json (o: like object): JSON_OBJECT
