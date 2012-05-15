@@ -1,12 +1,13 @@
 note
-	description : "HAL application root class"
-	date        : "$Date$"
-	revision    : "$Revision$"
+	description: "HAL application root class"
+	date: "$Date$"
+	revision: "$Revision$"
 
 class
 	APPLICATION
 
 inherit
+
 	SHARED_EJSON
 
 create
@@ -18,11 +19,11 @@ feature {NONE} -- Initialization
 		local
 --			hlink : LINK
 --			hresource : RESOURCE
-			order : ORDER
-			js_cc : JSON_CUSTOMER_CONVERTER
-			js_ic : JSON_ITEM_CONVERTER
-			js_li : JSON_LINE_ITEM_CONVERTER
-			js_oc : JSON_ORDER_CONVERTER
+			order: ORDER
+			js_cc: JSON_CUSTOMER_CONVERTER
+			js_ic: JSON_ITEM_CONVERTER
+			js_li: JSON_LINE_ITEM_CONVERTER
+			js_oc: JSON_ORDER_CONVERTER
 		do
 			create file_reader
 --			test_json_min
@@ -33,17 +34,16 @@ feature {NONE} -- Initialization
 			test_order
 		end
 
-
 	test_order
 		local
-			js_ic : JSON_ITEM_CONVERTER
-			js_li : JSON_LINE_ITEM_CONVERTER
-			js_cc : JSON_CUSTOMER_CONVERTER
-			js_oc : JSON_ORDER_CONVERTER
-			l_item : ITEM
-			line:LINE_ITEM
-			l_cust : CUSTOMER
-			l_order : ORDER
+			js_ic: JSON_ITEM_CONVERTER
+			js_li: JSON_LINE_ITEM_CONVERTER
+			js_cc: JSON_CUSTOMER_CONVERTER
+			js_oc: JSON_ORDER_CONVERTER
+			l_item: ITEM
+			line: LINE_ITEM
+			l_cust: CUSTOMER
+			l_order: ORDER
 		do
 			create js_ic.make
 			create js_li.make
@@ -53,27 +53,25 @@ feature {NONE} -- Initialization
 			json.add_converter (js_li)
 			json.add_converter (js_oc)
 			json.add_converter (js_cc)
-
 			create line.make ("basket")
 			create l_item.make ("ABCD123", 2, 9.5)
 			line.add_item (l_item)
 			create l_item.make ("GFZ111", 1, 11)
 			line.add_item (l_item)
-
-
 			create l_cust.make ("Javier", "test@hal.com")
-			create l_order.make ("test", "USD", "Placed",l_cust)
+			create l_order.make ("test", "USD", "Placed", l_cust)
 			l_order.add_item (l_item)
-
 			if attached {JSON_VALUE} json.value (l_order) as jv then
 				print (jv.representation)
 			end
-		end	test_item_line_item
+		end
+
+	test_item_line_item
 		local
-			js_ic : JSON_ITEM_CONVERTER
-			js_li : JSON_LINE_ITEM_CONVERTER
-			l_item : ITEM
-			line:LINE_ITEM
+			js_ic: JSON_ITEM_CONVERTER
+			js_li: JSON_LINE_ITEM_CONVERTER
+			l_item: ITEM
+			line: LINE_ITEM
 		do
 			create js_ic.make
 			create js_li.make
@@ -84,7 +82,6 @@ feature {NONE} -- Initialization
 			line.add_item (l_item)
 			create l_item.make ("GFZ111", 1, 11)
 			line.add_item (l_item)
-
 			if attached {JSON_VALUE} json.value (line) as jv then
 				print (jv.representation)
 			end
@@ -101,16 +98,18 @@ feature {NONE} -- Initialization
 					if attached {HAL_RESOURCE} json.object (jo, "HAL_RESOURCE") as r then
 						print (r.out)
 						if attached json.value (r) as jv then
-							 print (jv.representation)
+							print (jv.representation)
 						end
 						if attached r.self as l_link then
-						 	print (l_link.out)
+							print (l_link.out)
 						end
 						if attached r.links_keys as lk then
 							print (lk.out)
 						end
 						if attached r.links_by_key ("next") as ln then
-							check ln.rel ~ "next" end
+							check
+								ln.rel ~ "next"
+							end
 						end
 					end
 				end
@@ -118,7 +117,7 @@ feature {NONE} -- Initialization
 		end
 
 	test_json_hal
-    		--
+			--
 		do
 			if attached json_file_from ("hal_example.json") as json_file then
 				if attached {JSON_OBJECT} json_value_from_file (json_file) as jo then
@@ -143,7 +142,7 @@ feature {NONE} -- Initialization
 --		end
 
 	test_json_min
-    		--
+			--
 		do
 			if attached json_file_from ("min_hal.json") as json_file then
 				if attached {JSON_OBJECT} json_value_from_file (json_file) as jo then
@@ -152,11 +151,11 @@ feature {NONE} -- Initialization
 			end
 		end
 
-feature -- Implementation	
+feature -- Implementation
 
 	file_reader: JSON_FILE_READER
 
-   	json_file_from (fn: STRING): detachable STRING
+	json_file_from (fn: STRING): detachable STRING
 		do
 			Result := file_reader.read_json_from (fn)
 		ensure
@@ -174,8 +173,9 @@ feature -- Implementation
 		do
 			p := new_json_parser (json_file)
 			Result := p.parse_json
-			check json_is_parsed: p.is_parsed end
+			check
+				json_is_parsed: p.is_parsed
+			end
 		end
-
 
 end

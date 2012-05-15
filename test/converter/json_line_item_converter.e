@@ -8,73 +8,76 @@ class
 	JSON_LINE_ITEM_CONVERTER
 
 inherit
-    JSON_CONVERTER
+	JSON_CONVERTER
 
 create
-    make
+	make
 
 feature {NONE} -- Initialization
 
-    make
-        local
-            ucs: STRING_32
-        do
-            create ucs.make_empty
+	make
+		local
+			ucs: STRING_32
+		do
+			create ucs.make_empty
 			create object.make ("")
-        end
+		end
 
 feature -- Access
 
-    object: LINE_ITEM
+	object: LINE_ITEM
 
 feature -- Conversion
 
-    from_json (j: like to_json): detachable like object
-        local
-            ll: LINKED_LIST [ITEM]
-            i: INTEGER
-        do
-        	if attached {STRING_32} json.object (j.item (name_key), Void) as ucs then
-        		if attached {JSON_ARRAY} j.item (items_key) as ja then
-
-		            create Result.make (ucs)
-		            from
-		                i := 1
-		                create ll.make
-		            until
-		                i > ja.count
-		            loop
-		            	if attached {ITEM} json.object (ja [i], "ITEM") as b then
-			                ll.force (b)
-			            end
-		                i := i + 1
-		            end
-		            Result.add_items (ll)
-		         else
-		         	check has_array_items: False end
-		         end
-	        else
-	        	check has_name_key: False end
+	from_json (j: like to_json): detachable like object
+		local
+			ll: LINKED_LIST [ITEM]
+			i: INTEGER
+		do
+			if attached {STRING_32} json.object (j.item (name_key), Void) as ucs then
+				if attached {JSON_ARRAY} j.item (items_key) as ja then
+					create Result.make (ucs)
+					from
+						i := 1
+						create ll.make
+					until
+						i > ja.count
+					loop
+						if attached {ITEM} json.object (ja [i], "ITEM") as b then
+							ll.force (b)
+						end
+						i := i + 1
+					end
+					Result.add_items (ll)
+				else
+					check
+						has_array_items: False
+					end
+				end
+			else
+				check
+					has_name_key: False
+				end
 			end
-        end
+		end
 
-    to_json (o: like object): JSON_OBJECT
-        do
-            create Result.make
-			--Result.put (json.value (o.name), name_key)
-            Result.put (json.value (o.items), items_key)
-        end
+	to_json (o: like object): JSON_OBJECT
+		do
+			create Result.make
+				--Result.put (json.value (o.name), name_key)
+			Result.put (json.value (o.items), items_key)
+		end
 
-feature    {NONE} -- Implementation
+feature {NONE} -- Implementation
 
-    name_key: JSON_STRING
-        once
-            create Result.make_json ("name")
-        end
+	name_key: JSON_STRING
+		once
+			create Result.make_json ("name")
+		end
 
-    items_key: JSON_STRING
-        once
-            create Result.make_json ("items")
-        end
+	items_key: JSON_STRING
+		once
+			create Result.make_json ("items")
+		end
 
 end -- class JSON_LINE_ITEM_CONVERTER
