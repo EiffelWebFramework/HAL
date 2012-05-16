@@ -30,9 +30,77 @@ feature {NONE} -- Initialization
 --			test_json_link
 --			test_hal
 --			test_item_line_item
-			test_order
+--			test_order
+			example_from_hal_to_domain
 		end
 
+
+	example_from_hal_to_domain
+		local
+			js_ic : JSON_ITEM_CONVERTER
+			js_li : JSON_LINE_ITEM_CONVERTER
+			js_cc : JSON_CUSTOMER_CONVERTER
+			js_oc : JSON_ORDER_CONVERTER
+			js_hal:  JSON_HAL_RESOURCE_CONVERTER
+			l_item : ITEM
+			line:LINE_ITEM
+			l_cust : CUSTOMER
+			l_order : ORDER
+			l_res : HAL_RESOURCE
+			l_total : REAL
+			l_currency : STRING
+			l_status : STRING
+			l_placed : STRING
+
+		do
+			create js_ic.make
+			create js_li.make
+			create js_oc.make
+			create js_cc.make
+			create js_hal.make
+			json.add_converter (js_ic)
+			json.add_converter (js_li)
+			json.add_converter (js_oc)
+			json.add_converter (js_cc)
+			json.add_converter (js_hal)
+			if attached json_file_from ("hal_example.json") as json_file then
+				if attached {JSON_OBJECT} json_value_from_file (json_file) as jo then
+					if attached {HAL_RESOURCE} json.object (jo, "HAL_RESOURCE") as r then
+					    if attached {ARRAYED_LIST[HAL_RESOURCE]} r.embedded_resources_by_key ("order") as l_r then
+							from
+								l_r.start
+							until
+								l_r.after
+							loop
+								l_res:= l_r.item_for_iteration
+
+					            if attached {STRING} l_res.fields_by_key("currency") as l_ucs then
+					            	l_currency := l_ucs
+					            	print ("Currency:" + l_currency )
+					            end
+
+					            if attached {STRING} l_res.fields_by_key ("status") as l_ucs then
+					            	l_status := l_ucs
+									print ("Status:" + l_status )
+								end
+
+								if attached {STRING} l_res.fields_by_key ("placed") as l_ucs then
+					            	l_placed := l_ucs
+					            	print ("Placed:" + l_placed )
+								end
+
+
+
+								l_r.forth
+							end
+					    end
+
+					end
+				end
+			end
+
+
+		end
 
 	test_order
 		local
