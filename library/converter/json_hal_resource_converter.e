@@ -1,7 +1,7 @@
 note
 	description: "[
-			JSON_HAL_RESOURCE_CONVERTER  allow to go `from_json' and return a RESOURCE object and `to_json' convert an object RESOURCE into a JSON 
-			representation
+		JSON_HAL_RESOURCE_CONVERTER  allow to go `from_json' and return a RESOURCE object and `to_json' convert an object RESOURCE into a JSON 
+		representation
 	]"
 	date: "$Date$"
 	revision: "$Revision$"
@@ -10,6 +10,7 @@ class
 	JSON_HAL_RESOURCE_CONVERTER
 
 inherit
+
 	JSON_CONVERTER
 
 create
@@ -34,9 +35,9 @@ feature -- Access
 			l_list: LIST [like object]
 			j_array, l_embedded_keys: ARRAY [JSON_STRING]
 			js: JSON_STRING
-			i,k,l: INTEGER
+			i, k, l: INTEGER
 		do
-			--| TODO: Refactor to make it simpler
+				--| TODO: Refactor to make it simpler
 			create Result.make
 			from
 				i := 1
@@ -46,14 +47,13 @@ feature -- Access
 			loop
 				js := j_array [i]
 				if
-					not (js.is_equal (links_key) or  js.is_equal (embedded_key)) and then
-					attached  j.item (js) as l_rep
+					not (js.is_equal (links_key) or js.is_equal (embedded_key)) and then
+					attached j.item (js) as l_rep
 				then
 					Result.add_fields (js.item, l_rep.representation)
 				end
 				i := i + 1
 			end
-
 			if attached {JSON_OBJECT} j.item (links_key) as ll_links then
 				Result.add_all_links (from_json_link (ll_links))
 			end
@@ -78,9 +78,9 @@ feature -- Access
 						until
 							l > jea.count
 						loop
-							if 
+							if
 								attached {JSON_OBJECT} jea.i_th (l) as jeai and then
-								attached from_json (jeai) as jeai_r 
+								attached from_json (jeai) as jeai_r
 							then
 								l_list.force (jeai_r)
 							end
@@ -130,11 +130,11 @@ feature {NONE} -- Converter implementation
 
 	to_json_embedded_resource_internal (a_resource: LIST [HAL_RESOURCE]): JSON_VALUE
 		local
-			l_result_arr : JSON_ARRAY
+			l_result_arr: JSON_ARRAY
 		do
 			if a_resource.count = 1 then
 				create {JSON_OBJECT} Result.make
-				if attached to_json (a_resource.at (1))as l_res then
+				if attached to_json (a_resource.at (1)) as l_res then
 					Result := l_res
 				end
 			else
@@ -205,7 +205,7 @@ feature {NONE} -- Converter implementation
 		local
 			l_keys: ARRAY [JSON_STRING]
 			js: JSON_STRING
-			i,k: INTEGER
+			i, k: INTEGER
 			l_link: HAL_LINK
 		do
 			create Result.make (2)
@@ -216,9 +216,9 @@ feature {NONE} -- Converter implementation
 				i > l_keys.count
 			loop
 				js := l_keys [i]
-				if 
+				if
 					attached {JSON_OBJECT} j.item (js) as jo and then
-					attached create_link_attributes (jo) as la 
+					attached create_link_attributes (jo) as la
 				then
 					create l_link.make_with_attribute (js.item, la)
 					Result.force (l_link, js.item)
@@ -231,7 +231,7 @@ feature {NONE} -- Converter implementation
 					loop
 						if
 							attached {JSON_OBJECT} ja.i_th (k) as ji and then
-							attached create_link_attributes (ji) as lai 
+							attached create_link_attributes (ji) as lai
 						then
 							l_link.add_attribute (lai)
 						end
@@ -239,14 +239,14 @@ feature {NONE} -- Converter implementation
 					end
 					Result.force (l_link, js.item)
 				end
-				i := i +1
+				i := i + 1
 			end
 		end
 
-	create_link_attributes (j: JSON_OBJECT) : detachable HAL_LINK_ATTRIBUTE
+	create_link_attributes (j: JSON_OBJECT): detachable HAL_LINK_ATTRIBUTE
 			-- create an object LINK_ATTRIBUTE from a JSON_OBJECT
 		do
-			--|TODO refactor to make it simpler
+				--|TODO refactor to make it simpler
 			if attached {JSON_STRING} j.item (href_key) as j_href then
 				create Result.make (j_href.item)
 				if attached {JSON_STRING} j.item (name_key) as j_name then
@@ -297,7 +297,7 @@ feature {NONE} -- Implementation: LINK_ATTRIBUTE
 			create Result.make_json ("title")
 		end
 
-	hreflang_key : JSON_STRING
+	hreflang_key: JSON_STRING
 		once
 			create Result.make_json ("hreflang")
 		end

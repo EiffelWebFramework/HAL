@@ -3,7 +3,7 @@ note
 	author: ""
 	date: "$Date$"
 	revision: "$Revision$"
-	specification:"http://stateless.co/hal_specification.html"
+	specification: "http://stateless.co/hal_specification.html"
 
 class
 	HAL_RESOURCE
@@ -22,7 +22,7 @@ feature {NONE} -- Initialization
 			links.compare_objects
 		end
 
-	make_with_link (a_link : HAL_LINK)
+	make_with_link (a_link: HAL_LINK)
 			-- Create a new resource with his self.link
 		do
 			make
@@ -110,8 +110,7 @@ feature -- Access
 			end
 		end
 
-
-	fields_by_key (a_key:STRING): detachable STRING
+	fields_by_key (a_key: STRING): detachable STRING
 			-- Return a string value, if key `a_key' exists
 			-- Void in othercase
 		do
@@ -129,15 +128,14 @@ feature -- Element Change
 
 	add_link_with_key (a_key: STRING; a_link: HAL_LINK)
 			-- add an (a_key,a_link) pair
-		-- require a_key is_equal a_link.rel
+			-- require a_key is_equal a_link.rel
 		do
 			links.force (a_link, a_key)
 		end
 
-
 	add_link (a_link: HAL_LINK)
 		local
-			l_links : like links
+			l_links: like links
 		do
 			l_links := links
 			if l_links = Void then
@@ -145,7 +143,6 @@ feature -- Element Change
 				l_links.compare_objects
 				links := l_links
 			end
-
 			if l_links.has (a_link.rel) then
 				if attached {HAL_LINK} l_links.at (a_link.rel) as l_hal then
 					l_hal.attributes.append (a_link.attributes)
@@ -154,7 +151,6 @@ feature -- Element Change
 				l_links.force (a_link, a_link.rel)
 			end
 		end
-
 
 	add_fields (key: STRING; value: STRING)
 		local
@@ -168,7 +164,7 @@ feature -- Element Change
 			l_fields.force (value, key)
 		end
 
-	add_embedded_resource_with_key (key: STRING; res : HAL_RESOURCE)
+	add_embedded_resource_with_key (key: STRING; res: HAL_RESOURCE)
 		local
 			er: like embedded_resource
 		do
@@ -200,22 +196,20 @@ feature -- Element Change
 
 feature -- Status Report
 
-	is_valid_resource : BOOLEAN
+	is_valid_resource: BOOLEAN
 			-- Does this resource contains a self link?
 		do
 			Result := links.has_key ("self")
 		end
 
-
 feature {JSON_HAL_RESOURCE_CONVERTER} -- Implementation
 
 	links: HASH_TABLE [HAL_LINK, STRING]
 
-	embedded_resource : detachable HASH_TABLE [LIST [HAL_RESOURCE], STRING]
+	embedded_resource: detachable HASH_TABLE [LIST [HAL_RESOURCE], STRING]
 			-- expressing the embedded nature of a given part of the representation.
 
-	fields : detachable HASH_TABLE [STRING, STRING]
+	fields: detachable HASH_TABLE [STRING, STRING]
 			-- expressing 'outbound' hyperlinks to other, related URIs.
 
 end
-
