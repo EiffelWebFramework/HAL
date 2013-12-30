@@ -7,6 +7,7 @@
 		</option>
 		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
 		<library name="json" location="$ISE_LIBRARY\contrib\library\text\parser\json\library\json.ecf"/>
+		<library name="uri_template" location="$ISE_LIBRARY\contrib\library\text\parser\uri_template\uri_template.ecf"/>
 		<cluster name="hal" location=".\" recursive="true">
 			<file_rule>
 				<exclude>/EIFGENs$</exclude>

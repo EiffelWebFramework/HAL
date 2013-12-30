@@ -49,19 +49,19 @@ feature {NONE} -- Initialization
 feature -- Access
 
 	rel: STRING
-			--@rel
-			--REQUIRED
-			--For identifying how the target URI relates to the 'Subject Resource'.
-			--The Subject Resource is the closest parent Resource element.
-			--This attribute is not a requirement for the root element of a HAL representation,
-			--as it has an implicit default value of 'self'
-			--@rel corresponds with the 'relation parameter' as defined in Web Linking [RFC 5988]
-			--@rel attribute SHOULD be used for identifying Resource and Link elements in a HAL representation.
+			-- @rel
+			-- REQUIRED
+			-- For identifying how the target URI relates to the 'Subject Resource'.
+			-- The Subject Resource is the closest parent Resource element.
+			-- This attribute is not a requirement for the root element of a HAL representation,
+			-- as it has an implicit default value of 'self'
+			-- @rel corresponds with the 'relation parameter' as defined in Web Linking [RFC 5988]
+			-- @rel attribute SHOULD be used for identifying Resource and Link elements in a HAL representation.
 
 	attributes: LIST [HAL_LINK_ATTRIBUTE]
 			-- Multiple links can share the key (rel attribute)
 			-- attributes represent the following properties
-			--	href, name, title, hreflang
+			-- href, name, title, hreflang
 
 feature -- Element change
 

@@ -44,6 +44,19 @@ feature -- Test routines
 		end
 
 
+	test_empty_json
+    		--
+		local
+			l_res : detachable HAL_RESOURCE
+		do
+			l_res := json_to_hal ("empty.json")
+			assert("Not Void", l_res /= Void)
+			if attached l_res as l_r then
+				assert("Is Valid Resource", l_r.is_valid_resource = True)
+			end
+		end
+
+
 	test_self
 		local
 			l_res : detachable HAL_RESOURCE
@@ -58,6 +71,27 @@ feature -- Test routines
 				end
 			end
 		end
+
+
+	test_curies
+		local
+			l_res : detachable HAL_RESOURCE
+		do
+			l_res := json_to_hal ("curie_example.json")
+			assert("Not Void", l_res /= Void)
+			if attached l_res as ll_res then
+				if attached{HAL_LINK} ll_res.curies as l_curie then
+					assert ("Rel attribute is curies", l_curie.rel.same_string ("_curies") )
+					assert ("Has 2 elements", l_curie.attributes.count = 2 )
+					assert ("Has href",l_curie.attributes.at (1).href.same_string( "https://api.example.org/{?href}"))
+					assert ("Templated",l_curie.attributes.at (1).templated)
+					assert ("Has href",l_curie.attributes.at (2).href.same_string( "https://pool-2.static.example.org/file/{?href}"))
+					assert ("Templated",l_curie.attributes.at (2).templated)
+
+				end
+			end
+		end
+
 
 
 	test_links_key
@@ -164,6 +198,22 @@ feature -- Test routines
 		end
 
 
+	test_link_template
+		local
+				l_res : detachable HAL_RESOURCE
+			do
+				l_res := json_to_hal ("example_template.json")
+				assert("Not Void", l_res /= Void)
+				if attached{HAL_RESOURCE} l_res as ll_res then
+					assert ("Expected Void",ll_res.links_by_key ("keynotexist") = Void)
+					if attached {HAL_LINK} ll_res.links_by_key ("find") as ll_link then
+						assert ("Expected rel : next", ll_link.rel.same_string ("find"))
+						assert ("Expected shared links 1", ll_link.attributes.count = 1)
+						assert ("Expected templated : true", ll_link.attributes.at (1).templated = True)
+						assert ("Expected Href value", ll_link.attributes.at (1).href.same_string ( "/orders{?id}") )
+					end
+			end
+		end
 
 
 
@@ -201,7 +251,7 @@ feature {NONE} -- Implementation
 
    	json_file_from (fn: STRING): detachable STRING
 		do
-			Result := file_reader.read_json_from (test_dir + fn)
+			Result := file_reader.read_json_from (fn)
 			assert ("File contains json data", Result /= Void)
 		ensure
 			Result /= Void

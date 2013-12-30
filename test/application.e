@@ -32,7 +32,36 @@ feature {NONE} -- Initialization
 --			test_hal
 --			test_item_line_item
 --			test_order
-			example_from_hal_to_domain
+
+--			example_from_hal_to_domain
+			test_build_hal_json
+		end
+
+	test_build_hal_json
+		local
+			l_hal: JSON_HAL_RESOURCE_CONVERTER
+			l_res: HAL_RESOURCE
+			l_link: HAL_LINK
+			l_attribute: HAL_LINK_ATTRIBUTE
+		do
+			create l_hal.make
+			json.add_converter (l_hal)
+			create l_attribute.make ("/orders?{id}")
+			l_attribute.set_name ("orders")
+			create l_res.make
+			l_res.add_curie_link (l_attribute)
+			
+			create l_attribute.make ("/pages/?{page}")
+			l_attribute.set_name ("pages")
+			create l_link.make_with_attribute ("_curies",l_attribute)
+			l_res.add_link (l_link)
+
+			print ("%Nis_valid_resource:" + l_res.is_valid_resource.out )
+			io.put_new_line
+			if attached json.value (l_res) as ll_hal then
+				print (ll_hal.representation)
+			end
+
 		end
 
 	example_from_hal_to_domain

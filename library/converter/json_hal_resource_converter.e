@@ -191,7 +191,7 @@ feature {NONE} -- Converter implementation
 			create Result.make
 			Result.put (json.value (a_link_attribute.href), href_key)
 			if attached a_link_attribute.name as l_name then
-				Result.put (json.value (a_link_attribute.href), name_key)
+				Result.put (json.value (a_link_attribute.name), name_key)
 			end
 			if attached a_link_attribute.hreflang as l_hreflang then
 				Result.put (json.value (a_link_attribute.hreflang), hreflang_key)
@@ -199,6 +199,19 @@ feature {NONE} -- Converter implementation
 			if attached a_link_attribute.title as l_title then
 				Result.put (json.value (a_link_attribute.title), title_key)
 			end
+			if attached a_link_attribute.templated as l_templated then
+				Result.put (json.value (a_link_attribute.templated), templated_key)
+			end
+			if attached a_link_attribute.deprecation as l_deprecation then
+				Result.put (json.value (a_link_attribute.deprecation), deprecation_key)
+			end
+			if attached a_link_attribute.type as l_type then
+				Result.put (json.value (a_link_attribute.type), type_key)
+			end
+			if attached a_link_attribute.profile as l_profile then
+				Result.put (json.value (a_link_attribute.profile), profile_key)
+			end
+
 		end
 
 	from_json_link (j: attached like value): HASH_TABLE [HAL_LINK, STRING]
@@ -258,6 +271,20 @@ feature {NONE} -- Converter implementation
 				if attached {JSON_STRING} j.item (hreflang_key) as j_hreflang then
 					Result.set_hreflang (j_hreflang.item)
 				end
+				if attached {JSON_BOOLEAN} j.item (templated_key) as j_templated then
+					Result.set_templated (j_templated.item)
+				end
+				if attached {JSON_STRING} j.item (type_key) as j_type then
+					Result.set_type (j_type.item)
+				end
+				if attached {JSON_STRING} j.item (deprecation_key) as j_deprecation then
+					Result.set_deprecation (j_deprecation.item)
+				end
+				if attached {JSON_STRING} j.item (profile_key) as j_profile then
+					Result.set_profile (j_profile.item)
+				end
+
+
 			end
 		end
 
@@ -300,6 +327,26 @@ feature {NONE} -- Implementation: LINK_ATTRIBUTE
 	hreflang_key: JSON_STRING
 		once
 			create Result.make_json ("hreflang")
+		end
+
+	templated_key: JSON_STRING
+		once
+			create Result.make_json ("templated")
+		end
+
+	type_key: JSON_STRING
+		once
+			create Result.make_json ("type")
+		end
+
+	deprecation_key: JSON_STRING
+		once
+			create Result.make_json ("deprecation")
+		end
+
+	profile_key: JSON_STRING
+		once
+			create Result.make_json ("profile")
 		end
 
 end

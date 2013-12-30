@@ -4,6 +4,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 	specification: "http://stateless.co/hal_specification.html"
+	EIS: "JSON HAL Resource specification", "src=http://tools.ietf.org/html/draft-kelly-json-hal-06#section-4", "protocol=uri"
 
 class
 	HAL_RESOURCE
@@ -11,12 +12,11 @@ class
 create
 	make,
 	make_with_link
---	make_with_link_resources,
---	make_with_link_resources_properties
 
 feature {NONE} -- Initialization
 
 	make
+			-- Create a default HAL resource
 		do
 			create links.make (10)
 			links.compare_objects
@@ -33,14 +33,16 @@ feature -- Access
 
 	self: detachable HAL_LINK
 			-- Return the self link
-			--For example if you have the following JSON representation
+			-- For example if you have the following JSON representation
 			--
-			--					"_links": {
+			--		"_links": {
 			--		    "self": { "href": "/orders" },
 			--		    "next": { "href": "/orders?page=2" },
 			--		    "search": { "href": "/orders?id={order_id}" }
 			--		  }
-			-- you will get an object equivalent to the following JSON fragment
+
+			--	you will get an object equivalent to the following JSON fragment
+
 			-- 			"self": { "href": "/orders" },
 			--
 		require
@@ -51,16 +53,46 @@ feature -- Access
 			valid: Result /= Void
 		end
 
+
+
+	curies: detachable HAL_LINK
+			-- Return the curies link
+			-- For example if you have the following JSON representation
+			--
+			--	{
+			--  	"_links": {
+			--   	 	"self": { "href": "orders" },
+			-- 		   "_curies" : [
+			--    			  { "name": "api-root", "href": "https://api.example.org/{?href}", "templated": true},
+			--     			  { "name": "file-api-root", "href": "https://pool-2.static.example.org/file/{?href}", "templated": true }
+			--    			]
+			--  	},
+
+			--	you will get an object equivalent to the following JSON fragment
+
+			--			 "_curies" : [
+			--    			  { "name": "api-root", "href": "https://api.example.org/{?href}", "templated": true},
+			--     			  { "name": "file-api-root", "href": "https://pool-2.static.example.org/file/{?href}", "templated": true }
+			--    			]		
+		require
+			valid: is_valid_resource
+		do
+			Result := links.at ("_curies")
+		end
+		
+
 	links_keys: ARRAY [STRING]
 			-- Return an array of keys, ie rel attributes
-			--For example if you have the following JSON representation
+			-- For example if you have the following JSON representation
 			--
-			--					"_links": {
+			--		"_links": {
 			--		    "self": { "href": "/orders" },
 			--		    "next": { "href": "/orders?page=2" },
 			--		    "search": { "href": "/orders?id={order_id}" }
 			--		  }
+
 			-- you will get an ARRAY witht he following keys
+
 			-- 			"self","next","search"
 			--
 		do
@@ -70,14 +102,16 @@ feature -- Access
 	links_by_key (a_key: STRING): detachable HAL_LINK
 			-- Retrieve a link given a `a_key', ie a rel attribute if it exist,
 			-- Void in othercase
-			--For example if you have the following JSON representation
+			-- For example if you have the following JSON representation
 			--
-			--					"_links": {
+			--		"_links": {
 			--		    "self": { "href": "/orders" },
 			--		    "next": { "href": "/orders?page=2" },
 			--		    "search": { "href": "/orders?id={order_id}" }
 			--		  }
+
 			-- you will get a LINK if a_key is one of the following values
+
 			-- 			"self","next","search"
 			-- Void in other case
 		do
@@ -152,6 +186,25 @@ feature -- Element Change
 			end
 		end
 
+	add_curie_link (a_attribute: HAL_LINK_ATTRIBUTE)
+		local
+			l_links: like links
+		do
+			l_links := links
+			if l_links = Void then
+				create l_links.make (10)
+				l_links.compare_objects
+				links := l_links
+			end
+			if l_links.has ("_curies") then
+				if attached {HAL_LINK} l_links.at ("_curies") as l_hal then
+					l_hal.attributes.force (a_attribute)
+				end
+			else
+				l_links.force (create {HAL_LINK}.make_with_attribute ("_curies",a_attribute), "_curies")
+			end
+		end
+
 	add_fields (key: STRING; value: STRING)
 		local
 			l_fields: like fields
@@ -198,18 +251,20 @@ feature -- Status Report
 
 	is_valid_resource: BOOLEAN
 			-- Does this resource contains a self link?
+			-- or is an empty json {}?
 		do
-			Result := links.has_key ("self")
+			Result := links.has_key ("self") or else links.is_empty
 		end
 
 feature {JSON_HAL_RESOURCE_CONVERTER} -- Implementation
 
 	links: HASH_TABLE [HAL_LINK, STRING]
+			--  contains links to other resources.
 
 	embedded_resource: detachable HASH_TABLE [LIST [HAL_RESOURCE], STRING]
 			-- expressing the embedded nature of a given part of the representation.
 
 	fields: detachable HASH_TABLE [STRING, STRING]
-			-- expressing 'outbound' hyperlinks to other, related URIs.
+			-- properties that represent the current state of the resource
 
 end
