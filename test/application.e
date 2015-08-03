@@ -50,10 +50,10 @@ feature {NONE} -- Initialization
 			l_attribute.set_name ("orders")
 			create l_res.make
 			l_res.add_curie_link (l_attribute)
-			
+
 			create l_attribute.make ("/pages/?{page}")
 			l_attribute.set_name ("pages")
-			create l_link.make_with_attribute ("_curies",l_attribute)
+			create l_link.make_with_attribute ("curies",l_attribute)
 			l_res.add_link (l_link)
 
 			print ("%Nis_valid_resource:" + l_res.is_valid_resource.out )

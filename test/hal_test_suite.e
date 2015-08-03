@@ -31,6 +31,29 @@ feature {NONE} -- Events
 
 feature -- Test routines
 
+	test_invalid_hal_document
+    		--
+		local
+			l_res : detachable HAL_RESOURCE
+		do
+			l_res := json_to_hal ("min_hal_wrong_document.json")
+			if l_res = Void then
+				assert("Invalid Hal document", True)
+			end
+		end
+
+	test_valid_hal_document
+    		--
+		local
+			l_res : detachable HAL_RESOURCE
+		do
+			l_res := json_to_hal ("min_hal_document.json")
+			if attached l_res as l_r then
+				assert("Is Valid Hal document", True)
+			end
+		end
+
+
 	test_valid_hal
     		--
 		local
@@ -81,7 +104,7 @@ feature -- Test routines
 			assert("Not Void", l_res /= Void)
 			if attached l_res as ll_res then
 				if attached{HAL_LINK} ll_res.curies as l_curie then
-					assert ("Rel attribute is curies", l_curie.rel.same_string ("_curies") )
+					assert ("Rel attribute is curies", l_curie.rel.same_string ("curies") )
 					assert ("Has 2 elements", l_curie.attributes.count = 2 )
 					assert ("Has href",l_curie.attributes.at (1).href.same_string( "https://api.example.org/{?href}"))
 					assert ("Templated",l_curie.attributes.at (1).templated)

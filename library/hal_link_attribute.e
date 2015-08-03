@@ -3,7 +3,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 	specification: "http://stateless.co/hal_specification.html"
-	EIS: "JSON HAL specification", "src=http://tools.ietf.org/html/draft-kelly-json-hal-06", "protocol=uri"
+	EIS: "JSON HAL specification", "src=http://tools.ietf.org/html/draft-kelly-json-hal-07", "protocol=uri"
 
 class
 	HAL_LINK_ATTRIBUTE

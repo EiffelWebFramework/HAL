@@ -7,7 +7,7 @@
       { "href": "admins/2", "title": "Fred" },
       { "href": "admins/5", "title": "Kate" }
     ],
-    "_curies" : [
+    "curies" : [
       { "name": "api-root", "href": "https://api.example.org/{?href}", "templated": true},
       { "name": "file-api-root", "href": "https://pool-2.static.example.org/file/{?href}", "templated": true }
     ]
@@ -17,7 +17,7 @@
   "_embedded": {
    "orders": [{
        "_links": {
-         "_curies": [
+         "curies": [
            { "name": "file-api-root", "href": "https://pool-99.static.example.org/file/{?href}", "templated": true }
          ],
          "api-root:self": { "href": "orders/123" },
@@ -28,7 +28,7 @@
        },
        "total": 30.00,
        "currency": "USD",
-       "status": "shipped",
+       "status": "shipped"
      },{
        "_links": {
          "api-root:self": { "href": "orders/124" },

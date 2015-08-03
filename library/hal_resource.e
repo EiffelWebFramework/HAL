@@ -1,10 +1,11 @@
 note
-	description: "Resources have their own state, links, and embedded resources (which are resources in their own right)"
-	author: ""
+	description: "[
+		Resources have their own state, links, and embedded resources (which are resources in their own right
+		]"
 	date: "$Date$"
 	revision: "$Revision$"
 	specification: "http://stateless.co/hal_specification.html"
-	EIS: "JSON HAL Resource specification", "src=http://tools.ietf.org/html/draft-kelly-json-hal-06#section-4", "protocol=uri"
+	EIS: "JSON HAL Resource specification", "src=https://tools.ietf.org/html/draft-kelly-json-hal-07", "protocol=uri"
 
 class
 	HAL_RESOURCE
@@ -62,7 +63,7 @@ feature -- Access
 			--	{
 			--  	"_links": {
 			--   	 	"self": { "href": "orders" },
-			-- 		   "_curies" : [
+			-- 		   "curies" : [
 			--    			  { "name": "api-root", "href": "https://api.example.org/{?href}", "templated": true},
 			--     			  { "name": "file-api-root", "href": "https://pool-2.static.example.org/file/{?href}", "templated": true }
 			--    			]
@@ -70,16 +71,16 @@ feature -- Access
 
 			--	you will get an object equivalent to the following JSON fragment
 
-			--			 "_curies" : [
+			--			 "curies" : [
 			--    			  { "name": "api-root", "href": "https://api.example.org/{?href}", "templated": true},
 			--     			  { "name": "file-api-root", "href": "https://pool-2.static.example.org/file/{?href}", "templated": true }
 			--    			]		
 		require
 			valid: is_valid_resource
 		do
-			Result := links.at ("_curies")
+			Result := links.at ("curies")
 		end
-		
+
 
 	links_keys: ARRAY [STRING]
 			-- Return an array of keys, ie rel attributes
@@ -196,12 +197,12 @@ feature -- Element Change
 				l_links.compare_objects
 				links := l_links
 			end
-			if l_links.has ("_curies") then
-				if attached {HAL_LINK} l_links.at ("_curies") as l_hal then
+			if l_links.has ("curies") then
+				if attached {HAL_LINK} l_links.at ("curies") as l_hal then
 					l_hal.attributes.force (a_attribute)
 				end
 			else
-				l_links.force (create {HAL_LINK}.make_with_attribute ("_curies",a_attribute), "_curies")
+				l_links.force (create {HAL_LINK}.make_with_attribute ("curies",a_attribute), "curies")
 			end
 		end
 
