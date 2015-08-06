@@ -48,8 +48,13 @@ feature {NONE} -- Initialization
 			json.add_converter (l_hal)
 			create l_attribute.make ("/orders?{id}")
 			l_attribute.set_name ("orders")
+
 			create l_res.make
 			l_res.add_curie_link (l_attribute)
+
+			create l_attribute.make ("/")
+			create l_link.make_with_attribute ("self",l_attribute )
+			l_res.add_link (l_link)
 
 			create l_attribute.make ("/pages/?{page}")
 			l_attribute.set_name ("pages")

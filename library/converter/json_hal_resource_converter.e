@@ -161,7 +161,11 @@ feature {NONE} -- Converter implementation
 			until
 				a_links.after
 			loop
-				Result.put (to_json_link_internal (a_links.item_for_iteration), a_links.key_for_iteration)
+				if a_links.key_for_iteration.is_case_insensitive_equal (curies_key.item) then
+					Result.put (to_json_link_curies (a_links.item_for_iteration), a_links.key_for_iteration)
+				else
+					Result.put (to_json_link_internal (a_links.item_for_iteration), a_links.key_for_iteration)
+				end
 				a_links.forth
 			end
 		end
@@ -186,13 +190,29 @@ feature {NONE} -- Converter implementation
 			end
 		end
 
+	to_json_link_curies (a_link: HAL_LINK): JSON_VALUE
+		local
+			l_result_arr: JSON_ARRAY
+		do
+			create {JSON_ARRAY} l_result_arr.make_array
+			from
+				a_link.attributes.start
+			until
+				a_link.attributes.after
+			loop
+				l_result_arr.add (to_json_link_attribute (a_link.attributes.item_for_iteration))
+				a_link.attributes.forth
+			end
+			Result := l_result_arr
+		end
+
 	to_json_link_attribute (a_link_attribute: HAL_LINK_ATTRIBUTE): JSON_OBJECT
 		do
 			create Result.make
-			Result.put (json.value (a_link_attribute.href), href_key)
 			if attached a_link_attribute.name as l_name then
 				Result.put (json.value (a_link_attribute.name), name_key)
 			end
+			Result.put (json.value (a_link_attribute.href), href_key)
 			if attached a_link_attribute.hreflang as l_hreflang then
 				Result.put (json.value (a_link_attribute.hreflang), hreflang_key)
 			end
@@ -283,8 +303,6 @@ feature {NONE} -- Converter implementation
 				if attached {JSON_STRING} j.item (profile_key) as j_profile then
 					Result.set_profile (j_profile.item)
 				end
-
-
 			end
 		end
 
@@ -347,6 +365,11 @@ feature {NONE} -- Implementation: LINK_ATTRIBUTE
 	profile_key: JSON_STRING
 		once
 			create Result.make_json ("profile")
+		end
+
+	curies_key: JSON_STRING
+		once
+			create Result.make_json ("curies")
 		end
 
 end
