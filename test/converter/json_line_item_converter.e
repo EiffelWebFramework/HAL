@@ -69,12 +69,12 @@ feature {NONE} -- Implementation
 
 	name_key: JSON_STRING
 		once
-			create Result.make_json ("name")
+			create Result.make_from_string ("name")
 		end
 
 	items_key: JSON_STRING
 		once
-			create Result.make_json ("items")
+			create Result.make_from_string ("items")
 		end
 
 end -- class JSON_LINE_ITEM_CONVERTER

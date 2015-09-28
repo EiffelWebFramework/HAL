@@ -24,7 +24,7 @@ feature {NONE} -- Initialization
 		end
 
 	make_with_link (a_link: HAL_LINK)
-			-- Create a new resource with his self.link
+			-- Create a new resource with his self.link `a_link'
 		do
 			make
 			add_link_with_key ("self", a_link)
@@ -228,10 +228,8 @@ feature -- Element Change
 				embedded_resource := er
 				er.compare_objects
 			end
-			if er.has (key) then
-				if attached {LIST [HAL_RESOURCE]} er.at (key) as l_er then
-					l_er.force (res)
-				end
+			if er.has (key) and then attached {LIST [HAL_RESOURCE]} er.at (key) as l_er then
+				l_er.force (res)
 			end
 		end
 
