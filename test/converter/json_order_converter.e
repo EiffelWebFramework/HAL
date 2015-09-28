@@ -82,27 +82,27 @@ feature {NONE} -- Implementation
 
 	id_key: JSON_STRING
 		once
-			create Result.make_json ("id")
+			create Result.make_from_string ("id")
 		end
 
 	name_key: JSON_STRING
 		once
-			create Result.make_json ("name")
+			create Result.make_from_string ("name")
 		end
 
 	currency_key: JSON_STRING
 		once
-			create Result.make_json ("currency")
+			create Result.make_from_string ("currency")
 		end
 
 	status_key: JSON_STRING
 		once
-			create Result.make_json ("status")
+			create Result.make_from_string ("status")
 		end
 
 	placed_key: JSON_STRING
 		once
-			create Result.make_json ("placed")
+			create Result.make_from_string ("placed")
 		end
 
 	customer_key: JSON_STRING

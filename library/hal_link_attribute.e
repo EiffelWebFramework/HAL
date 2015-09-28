@@ -153,12 +153,7 @@ feature {NONE} -- Implementation
 				is_valid_template: l_uri_template.is_valid
 			end
 
-			if l_uri_template.path_variable_names.is_empty and then
-				l_uri_template.query_variable_names.is_empty then
-				Result := False
-			else
-				Result := True
-			end
+			Result := not ( l_uri_template.path_variable_names.is_empty and then l_uri_template.query_variable_names.is_empty )
 		end
 
 end

@@ -59,12 +59,12 @@ feature    {NONE} -- Implementation
 
     name_key: JSON_STRING
         once
-            create Result.make_json ("name")
+            create Result.make_from_string ("name")
         end
 
     email_key: JSON_STRING
         once
-            create Result.make_json ("email")
+            create Result.make_from_string ("email")
         end
 
 end -- class JSON_CUSTOMER_CONVERTER

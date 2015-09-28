@@ -16,7 +16,7 @@ inherit
 create
 	make
 
-feature -- Initialization
+feature {NONE} -- Initialization
 
 	make
 		do
@@ -138,7 +138,7 @@ feature {NONE} -- Converter implementation
 					Result := l_res
 				end
 			else
-				create {JSON_ARRAY} l_result_arr.make_array
+				create {JSON_ARRAY} l_result_arr.make_empty
 				from
 					a_resource.start
 				until
@@ -177,7 +177,7 @@ feature {NONE} -- Converter implementation
 			if a_link.attributes.count = 1 then
 				Result := to_json_link_attribute (a_link.attributes.first)
 			else
-				create {JSON_ARRAY} l_result_arr.make_array
+				create {JSON_ARRAY} l_result_arr.make_empty
 				from
 					a_link.attributes.start
 				until
@@ -194,7 +194,7 @@ feature {NONE} -- Converter implementation
 		local
 			l_result_arr: JSON_ARRAY
 		do
-			create {JSON_ARRAY} l_result_arr.make_array
+			create {JSON_ARRAY} l_result_arr.make_empty
 			from
 				a_link.attributes.start
 			until
@@ -310,66 +310,66 @@ feature {NONE} -- Implementation: RESOURCE
 
 	links_key: JSON_STRING
 		once
-			create Result.make_json ("_links")
+			create Result.make_from_string ("_links")
 		end
 
 	embedded_key: JSON_STRING
 		once
-			create Result.make_json ("_embedded")
+			create Result.make_from_string ("_embedded")
 		end
 
 feature {NONE} -- Implementation: LINK
 
 	href_key: JSON_STRING
 		once
-			create Result.make_json ("href")
+			create Result.make_from_string ("href")
 		end
 
 	ref_key: JSON_STRING
 		once
-			create Result.make_json ("ref")
+			create Result.make_from_String ("ref")
 		end
 
 feature {NONE} -- Implementation: LINK_ATTRIBUTE
 
 	name_key: JSON_STRING
 		once
-			create Result.make_json ("name")
+			create Result.make_from_string("name")
 		end
 
 	title_key: JSON_STRING
 		once
-			create Result.make_json ("title")
+			create Result.make_from_string ("title")
 		end
 
 	hreflang_key: JSON_STRING
 		once
-			create Result.make_json ("hreflang")
+			create Result.make_from_string ("hreflang")
 		end
 
 	templated_key: JSON_STRING
 		once
-			create Result.make_json ("templated")
+			create Result.make_from_string ("templated")
 		end
 
 	type_key: JSON_STRING
 		once
-			create Result.make_json ("type")
+			create Result.make_from_string ("type")
 		end
 
 	deprecation_key: JSON_STRING
 		once
-			create Result.make_json ("deprecation")
+			create Result.make_from_string ("deprecation")
 		end
 
 	profile_key: JSON_STRING
 		once
-			create Result.make_json ("profile")
+			create Result.make_from_string ("profile")
 		end
 
 	curies_key: JSON_STRING
 		once
-			create Result.make_json ("curies")
+			create Result.make_from_string ("curies")
 		end
 
 end

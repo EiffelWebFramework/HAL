@@ -62,17 +62,17 @@ feature    {NONE} -- Implementation
 
     id_key: JSON_STRING
         once
-            create Result.make_json ("id")
+            create Result.make_from_string ("id")
         end
 
     quantity_key: JSON_STRING
         once
-            create Result.make_json ("quantity")
+            create Result.make_from_string ("quantity")
         end
 
     price_key: JSON_STRING
         once
-            create Result.make_json ("price")
+            create Result.make_from_string ("price")
         end
 
 
