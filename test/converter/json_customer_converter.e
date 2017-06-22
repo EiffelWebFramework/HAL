@@ -1,70 +1,61 @@
 note
 	description: "Summary description for {JSON_CUSTOMER_CONVERTER}."
 	author: ""
-	date: "$Date$"
-	revision: "$Revision$"
+	date: "$Date: 2017-06-20 16:23:13 +0200 (mar., 20 juin 2017) $"
+	revision: "$Revision: 100528 $"
 
 class
 	JSON_CUSTOMER_CONVERTER
+
 inherit
-    JSON_CONVERTER
-
-create
-    make
-
-feature {NONE} -- Initialization
-
-    make
-        local
-            l_name: STRING_32
-            l_email: STRING_32
-        do
-            create l_name.make_from_string ("")
-            create l_email.make_from_string ("")
-            create object.make (l_name,l_email)
-        end
-
-feature -- Access
-
-    object: CUSTOMER
+	JSON_SERIALIZER
+	JSON_DESERIALIZER
 
 feature -- Conversion
 
-    from_json (j: like to_json): detachable like object
-        local
-            l_name: detachable STRING_32
-            l_email : detachable STRING_32
-        do
-            if attached {STRING_32} json.object (j.item (name_key), Void) as l_ucs then
-            	l_name := l_ucs
-            end
+	to_json (obj: detachable ANY; ctx: JSON_SERIALIZER_CONTEXT): JSON_VALUE
+		local
+			jo: JSON_OBJECT
+		do
+			if attached {CUSTOMER} obj as o then
+				create jo.make
+				jo.put_string (o.name, name_key)
+				jo.put_string (o.email, email_key)
+				Result := jo
+			else
+				create {JSON_NULL} Result
+			end
+		end
 
-            if attached {STRING_32} json.object (j.item (email_key), Void) as l_ucs then
-            	l_email := l_ucs
-            end
+	from_json (a_json: detachable JSON_VALUE; ctx: JSON_DESERIALIZER_CONTEXT; a_type: detachable TYPE [detachable ANY]): detachable CUSTOMER
+		do
+			if attached {JSON_OBJECT} a_json as jo then
+				if
+					attached {JSON_STRING} jo.item (name_key) as l_name and
+					attached {JSON_STRING} jo.item (email_key) as l_email
+				then
+					create Result.make (l_name.unescaped_string_32, l_email.unescaped_string_8)
+				else
+					check
+						has_name: False
+					end
+					check
+						has_email: False
+					end
+				end
+			end
+		end
 
-            check l_email /= Void end
-            check l_name /= Void end
-            create Result.make (l_name, l_email)
-        end
+feature {NONE} -- Implementation
 
-    to_json (o: like object): JSON_OBJECT
-        do
-            create Result.make
-            Result.put (json.value (o.name), name_key)
-            Result.put (json.value (o.email), email_key)
-        end
+	name_key: JSON_STRING
+		once
+			create Result.make_from_string ("name")
+		end
 
-feature    {NONE} -- Implementation
-
-    name_key: JSON_STRING
-        once
-            create Result.make_from_string ("name")
-        end
-
-    email_key: JSON_STRING
-        once
-            create Result.make_from_string ("email")
-        end
+	email_key: JSON_STRING
+		once
+			create Result.make_from_string ("email")
+		end
 
 end -- class JSON_CUSTOMER_CONVERTER

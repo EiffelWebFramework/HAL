@@ -1,8 +1,8 @@
 note
 	description: "Summary description for {ORDER}."
 	author: ""
-	date: "$Date$"
-	revision: "$Revision$"
+	date: "$Date: 2015-09-28 20:08:40 +0200 (lun., 28 sept. 2015) $"
+	revision: "$Revision: 97942 $"
 
 class
 	ORDER

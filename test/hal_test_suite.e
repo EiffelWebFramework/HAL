@@ -3,22 +3,17 @@ note
 		Eiffel tests that can be executed by testing tool.
 	]"
 	author: "EiffelStudio test wizard"
-	date: "$Date$"
-	revision: "$Revision$"
+	date: "$Date: 2017-06-20 18:10:43 +0200 (mar., 20 juin 2017) $"
+	revision: "$Revision: 100533 $"
 	testing: "type/manual"
 
 class
 	HAL_TEST_SUITE
 
 inherit
-	SHARED_EJSON
-			rename default_create as default_create_ejson
-		end
 	EQA_TEST_SET
 		redefine
 			on_prepare
-		select
-			default_create
 		end
 
 feature {NONE} -- Events
@@ -48,9 +43,7 @@ feature -- Test routines
 			l_res : detachable HAL_RESOURCE
 		do
 			l_res := json_to_hal ("min_hal_document.json")
-			if attached l_res as l_r then
-				assert("Is Valid Hal document", True)
-			end
+			assert("Is Valid Hal document", l_res /= Void)
 		end
 
 
@@ -62,7 +55,7 @@ feature -- Test routines
 			l_res := json_to_hal ("min_hal.json")
 			assert("Not Void", l_res /= Void)
 			if attached l_res as l_r then
-				assert("Is Valid Resource", l_r.is_valid_resource = True)
+				assert("Is Valid Resource", l_r.is_valid_resource)
 			end
 		end
 
@@ -75,7 +68,7 @@ feature -- Test routines
 			l_res := json_to_hal ("empty.json")
 			assert("Not Void", l_res /= Void)
 			if attached l_res as l_r then
-				assert("Is Valid Resource", l_r.is_valid_resource = True)
+				assert("Is Valid Resource", l_r.is_valid_resource)
 			end
 		end
 
@@ -87,7 +80,7 @@ feature -- Test routines
 			l_res := json_to_hal ("min_hal.json")
 			assert("Not Void", l_res /= Void)
 			if attached l_res as ll_res then
-				if attached{HAL_LINK} ll_res.self as l_link then
+				if attached {HAL_LINK} ll_res.self as l_link then
 					assert ("Rel attribute is self", l_link.rel ~ "self" )
 					assert ("Has 1 element", l_link.attributes.count = 1 )
 					assert ("Has href",l_link.attributes.at (1).href ~ "http://example.com/")
@@ -119,18 +112,18 @@ feature -- Test routines
 
 	test_links_key
 		local
-			l_res : detachable HAL_RESOURCE
-			l_arr : ARRAY[STRING]
+			l_res: detachable HAL_RESOURCE
+			l_arr: ARRAY [READABLE_STRING_GENERAL]
 		do
 			l_res := json_to_hal ("hal_example.json")
-			assert("Not Void", l_res /= Void)
-			if attached{HAL_RESOURCE} l_res as ll_res then
-				l_arr := ll_res.links_keys
+			assert ("Not Void", l_res /= Void)
+			if l_res /= Void then
+				l_arr := l_res.links_keys
 				l_arr.compare_objects
 				assert ("Has three elements", l_arr.count = 3 )
-				assert ("Has element self", l_arr.has ("self") = True)
-				assert ("Has element next", l_arr.has ("next") = True)
-				assert ("Has element searcg", l_arr.has ("search") = True)
+				assert ("Has element self", l_arr.has ("self"))
+				assert ("Has element next", l_arr.has ("next"))
+				assert ("Has element searcg", l_arr.has ("search"))
 			end
 		end
 
@@ -141,12 +134,12 @@ feature -- Test routines
 		do
 			l_res := json_to_hal ("hal_example.json")
 			assert("Not Void", l_res /= Void)
-			if attached{HAL_RESOURCE} l_res as ll_res then
-				assert ("Expected Void",ll_res.links_by_key ("keynotexist") = Void)
-				if attached {HAL_LINK} ll_res.links_by_key ("next") as ll_link then
-					assert ("Expected rel : next", ll_link.rel ~ "next")
-					assert ("Expected shared links 1", ll_link.attributes.count = 1)
-					assert ("Expected Href value", ll_link.attributes.at (1).href ~ "/orders?page=2" )
+			if l_res /= Void then
+				assert ("Expected Void", l_res.links_by_key ("keynotexist") = Void)
+				if attached {HAL_LINK} l_res.links_by_key ("next") as l_link then
+					assert ("Expected rel : next", l_link.rel ~ "next")
+					assert ("Expected shared links 1", l_link.attributes.count = 1)
+					assert ("Expected Href value", l_link.attributes.first.href ~ "/orders?page=2" )
 				end
 			end
 		end
@@ -184,8 +177,6 @@ feature -- Test routines
 			end
 		end
 
-
-
 	test_fields_keys
 		local
 			l_res : detachable HAL_RESOURCE
@@ -202,8 +193,6 @@ feature -- Test routines
 			end
 		end
 
-
-
 	test_fields_by_key
 		local
 			l_res : detachable HAL_RESOURCE
@@ -219,7 +208,6 @@ feature -- Test routines
 				end
 			end
 		end
-
 
 	test_link_template
 		local
@@ -238,30 +226,27 @@ feature -- Test routines
 			end
 		end
 
-
-
-
 feature {NONE} -- Implementation
+
 	hal_to_json ( a_res : HAL_RESOURCE) : detachable JSON_VALUE
 		local
-				hal: JSON_HAL_RESOURCE_CONVERTER
+			conv: JSON_HAL_RESOURCE_CONVERTER
 		do
-				create hal.make
-				json.add_converter (hal)
-				Result := json.value (a_res)
+			create conv.make
+			Result := conv.to_json (a_res)
 		end
 
 	json_to_hal (fn : STRING) : detachable HAL_RESOURCE
 		local
-			parse_json: like new_json_parser
-			hal: JSON_HAL_RESOURCE_CONVERTER
+			jp: like new_json_parser
+			conv: JSON_HAL_RESOURCE_CONVERTER
 		do
-			create hal.make
-			json.add_converter (hal)
 			if attached json_file_from (fn) as json_file then
-				parse_json := new_json_parser (json_file)
-				if attached parse_json.parse_json as jv then
-					if attached {HAL_RESOURCE} json.object (jv, "HAL_RESOURCE") as l_hal then
+				jp := new_json_parser (json_file)
+				jp.parse_content
+				if attached jp.parsed_json_value as jv then
+					create conv.make
+					if attached {HAL_RESOURCE} conv.from_json (jv) as l_hal then
 						Result := l_hal
 					end
 				end
@@ -282,7 +267,7 @@ feature {NONE} -- Implementation
 
 	new_json_parser (a_string: STRING): JSON_PARSER
 		do
-			create Result.make_parser (a_string)
+			create Result.make_with_string (a_string)
 		end
 
 	json_value_from_file (json_file: STRING): detachable JSON_VALUE
@@ -290,15 +275,16 @@ feature {NONE} -- Implementation
 			p: like new_json_parser
 		do
 			p := new_json_parser (json_file)
-			Result := p.parse_json
+			p.parse_content
 			check json_is_parsed: p.is_parsed end
+			Result := p.parsed_json_value
 		end
 
-	test_dir: STRING
+	test_dir: STRING_32
 		local
 			i: INTEGER
 		do
-			Result := (create {EXECUTION_ENVIRONMENT}).current_working_directory
+			Result := (create {EXECUTION_ENVIRONMENT}).current_working_path.name
 			Result.append_character ((create {OPERATING_ENVIRONMENT}).directory_separator)
 				-- The should looks like
 				-- ..json\test\autotest\test_suite\EIFGENs\test_suite\Testing\execution\TEST_JSON_SUITE.test_json_fail1\..\..\..\..\..\fail1.json
