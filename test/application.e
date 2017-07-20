@@ -57,10 +57,10 @@ feature {NONE} -- Initialization
 			if attached conv.to_json (l_res) as j then
 				print (j.representation)
 
-				if attached conv.from_json (j) as hal then
-					print (hal)
-					print (friendly_output (hal))
-				end
+--				if attached conv.from_json (j) as hal then
+--					print (hal)
+--					print (friendly_output (hal))
+--				end
 			end
 		end
 

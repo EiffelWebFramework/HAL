@@ -1,0 +1,5 @@
+language eiffel
+before_install:
+ - sudo add-apt-repository ppa:eiffelstudio-team/ppa 
+ - sudo apt-get update 
+ - sudo apt-get install eiffelstudio
