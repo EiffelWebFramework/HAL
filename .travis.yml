@@ -1,5 +1,6 @@
 language: eiffel
 before_script:
+  - current_dir=$(pwd)
   - cd ..
   - wget https://ftp.eiffel.com/pub/beta/nightly/Eiffel_17.11_gpl_100608-linux-x86-64.tar.bz2  
   - tar -xvf Eiffel_17.11_gpl_100608-linux-x86-64.tar.bz2
@@ -7,12 +8,12 @@ before_script:
   - export ISE_PLATFORM=linux-x86-64
   - export PATH=$PATH:$ISE_EIFFEL/studio/spec/$ISE_PLATFORM/bin
   - export PATH=$PATH:$ISE_EIFFEL/tools/spec/$ISE_PLATFORM/bin
-  - cd HAL
+  - cd current_dir
 
 # safelist
 branches:
   only:
-  - hal_issue
+  - master
 
 
 script: compile_all -ecb -melt -list_failures -clean -options dotnet=false
