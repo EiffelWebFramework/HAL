@@ -1,6 +1,7 @@
 language: eiffel
 before_script:
-  - current_dir=$(pwd)
+  - set current_dir=$(pwd)
+  - echo current_dir
   - cd ..
   - wget https://ftp.eiffel.com/pub/beta/nightly/Eiffel_17.11_gpl_100608-linux-x86-64.tar.bz2  
   - tar -xvf Eiffel_17.11_gpl_100608-linux-x86-64.tar.bz2
