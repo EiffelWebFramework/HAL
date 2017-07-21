@@ -1,6 +1,6 @@
 language: eiffel
 before_script:
-  - set current_dir=$(pwd)
+  - export current_dir=$(pwd)
   - echo current_dir
   - cd ..
   - wget https://ftp.eiffel.com/pub/beta/nightly/Eiffel_17.11_gpl_100608-linux-x86-64.tar.bz2  
@@ -9,7 +9,7 @@ before_script:
   - export ISE_PLATFORM=linux-x86-64
   - export PATH=$PATH:$ISE_EIFFEL/studio/spec/$ISE_PLATFORM/bin
   - export PATH=$PATH:$ISE_EIFFEL/tools/spec/$ISE_PLATFORM/bin
-  - cd current_dir
+  - cd $current_dir
 
 # safelist
 branches:
