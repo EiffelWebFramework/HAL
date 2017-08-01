@@ -7,9 +7,6 @@ os:
 build:
   verbosity: detailed
 
-configuration:
-  - Release
-
 branches:
   only:
     - master
@@ -18,12 +15,12 @@ install:
   ############################################################################
   # Install EiffelStudio 
   ############################################################################
-  - mkdir C:\eiffel
-  - cd C:\eiffel
+  - mkdir C:\projects\eiffel
+  - cd C:\projects\eiffel
 
   - set EIFFELSTUDIO_URL="https://ftp.eiffel.com/pub/beta/nightly/Eiffel_17.11_gpl_100607-win64.7z"
   - appveyor DownloadFile %EIFFELSTUDIO_URL% -FileName eiffel_studio.zip
-  - 7z x eiffel_studio.zip -oC:\eiffel\ > nul
+  - 7z x eiffel_studio.zip -oC:\projects\eiffel\ > nul
   - cmd: set ISE_C_COMPILER=msc_vc140
   - cmd: set ISE_PLATFORM=win64
   - cmd: set ISE_EIFFEL=C:\eiffel\Eiffel_17.11 
@@ -33,7 +30,6 @@ install:
 
 before_build:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat" amd64
-  - mkdir C:\projects
 
 build_script:
   - cd C:\projects
