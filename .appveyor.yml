@@ -2,7 +2,7 @@
 shallow_clone: true
 
 os:
-  - Windows Server 2012
+  - Visual Studio 2017
 
 build:
   verbosity: detailed
