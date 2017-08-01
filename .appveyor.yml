@@ -1,0 +1,52 @@
+# Bitprim
+#
+# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+
+shallow_clone: true
+
+os:
+  - Visual Studio 2017
+
+build:
+  verbosity: detailed
+
+configuration:
+  - Release
+
+branches:
+  only:
+    - master
+
+install:
+  ############################################################################
+  # Install EiffelStudio 
+  ############################################################################
+  - mkdir C:\eiffel
+  - cd C:\eiffel
+
+  - set EIFFELSTUDIO_URL="https://ftp.eiffel.com/pub/beta/nightly/Eiffel_17.11_gpl_100607-win64.7z"
+  - appveyor DownloadFile %EIFFELSTUDIO_URL% -FileName eiffel_studio.zip
+  - 7z x eiffel_studio.zip -oC:\eiffel\ > nul
+  - set ISE_C_COMPILER=msc_vc140
+  - set ISE_PLATFORM=win64
+  - set ISE_EIFFEL=C:\eiffel\Eiffel_17.11 
+  - set PATH=%ISE_EIFFEL%/tools/spec/%ISE_PLATFORM%/bin;%PATH%
+  - set PATH=%ISE_EIFFEL%tools/spec/$ISE_PLATFORM/bin;%PATH%
+  - ec -version
+
+  ############################################################################
+  # Install EiffelStudio 
+  ############################################################################
+  - mkdir C:\projects
+
+
+ before_build:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat" amd64
+
+
+build_script:
+  - cd C:\projects
+  - git clone https://github.com/jvelilla/HAL
+  - cd HAL
+  - compile_all -ecb -melt -list_failures -clean -options dotnet=false
+
