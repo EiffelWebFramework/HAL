@@ -31,15 +31,9 @@ install:
   - set PATH=%ISE_EIFFEL%tools/spec/$ISE_PLATFORM/bin;%PATH%
   - ec -version
 
-  ############################################################################
-  # Install EiffelStudio 
-  ############################################################################
-  - mkdir C:\projects
-
-
  before_build:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat" amd64
-
+  - mkdir C:\projects
 
 build_script:
   - cd C:\projects
