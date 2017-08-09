@@ -143,14 +143,15 @@ feature -- Access
 			end
 		end
 
-	fields_by_key (a_key: READABLE_STRING_GENERAL): detachable READABLE_STRING_32
-			-- Return a string value, if key `a_key' exists
+	fields_by_key (a_key: READABLE_STRING_GENERAL): detachable ANY
+			-- Return a value, if key `a_key' exists
 			-- Void in othercase
 		do
 			if attached fields as l_fields then
 				Result := l_fields [a_key]
 			end
 		end
+
 
 feature -- Element Change
 
@@ -196,14 +197,14 @@ feature -- Element Change
 			add_link_with_key ("curies", create {HAL_LINK}.make_with_attribute ("curies", a_attribute))
 		end
 
-	add_fields (key: READABLE_STRING_GENERAL; value: READABLE_STRING_GENERAL)
+	add_fields (key: READABLE_STRING_GENERAL; value: ANY)
 		obsolete
 			"Use `add_field` [2017-06-20]"
 		do
 			add_field (key, value)
 		end
 
-	add_field (key: READABLE_STRING_GENERAL; value: READABLE_STRING_GENERAL)
+	add_field (key: READABLE_STRING_GENERAL; value: ANY)
 		local
 			l_fields: like fields
 		do
@@ -212,7 +213,7 @@ feature -- Element Change
 				create l_fields.make (1)
 				fields := l_fields
 			end
-			l_fields.force (value.to_string_32, key)
+			l_fields.force (value, key)
 		end
 
 	add_embedded_resource_with_key (key: READABLE_STRING_GENERAL; res: HAL_RESOURCE)
@@ -252,6 +253,7 @@ feature -- Status Report
 			Result := links.has_key ("self") or else links.is_empty
 		end
 
+
 feature {HAL_ACCESS} -- Implementation
 
 	links: STRING_TABLE [HAL_LINK]
@@ -260,7 +262,8 @@ feature {HAL_ACCESS} -- Implementation
 	embedded_resource: detachable STRING_TABLE [LIST [HAL_RESOURCE]]
 			-- expressing the embedded nature of a given part of the representation.
 
-	fields: detachable STRING_TABLE [READABLE_STRING_32]
+	fields: detachable STRING_TABLE [ANY]
 			-- Properties representing current state of Current resource.
+
 
 end

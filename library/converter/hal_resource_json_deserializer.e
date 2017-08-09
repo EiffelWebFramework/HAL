@@ -32,9 +32,15 @@ feature -- Conversion
 						if attached {JSON_STRING} j_rep as js_rep then
 							Result.add_field (js.item, js_rep.unescaped_string_32)
 						elseif attached {JSON_NUMBER} j_rep as jn_rep then
-							Result.add_field (js.item, jn_rep.item)
+							if jn_rep.is_integer then
+								Result.add_field (js.item, jn_rep.integer_64_item)
+							elseif jn_rep.is_double then
+								Result.add_field (js.item, jn_rep.real_64_item)
+							else -- natural	
+								Result.add_field (js.item, jn_rep.natural_64_item)
+							end
 						elseif attached {JSON_BOOLEAN} j_rep as jb_rep then
-							Result.add_field (js.item, jb_rep.item.out)
+							Result.add_field (js.item, jb_rep.item)
 						elseif attached {JSON_NULL} j_rep as jnull then
 							Result.add_field (js.item, "null")
 						else

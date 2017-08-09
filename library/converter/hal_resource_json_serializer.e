@@ -29,7 +29,45 @@ feature -- Convertion
 					across
 						l_fields as ic
 					loop
-						jo.put_string (ic.item, ic.key)
+						if attached {BOOLEAN} ic.item as bool then
+							jo.put_boolean (bool, ic.key)
+						elseif attached {NUMERIC} ic.item as num then
+							if attached {INTEGER_64} num as i64 then
+								jo.put_integer (i64, ic.key)
+							elseif attached {INTEGER_32} num as i32 then
+								jo.put_integer (i32, ic.key)
+							elseif attached {INTEGER_16} num as i16 then
+								jo.put_integer (i16, ic.key)
+							elseif attached {INTEGER_8} num as i8 then
+								jo.put_integer (i8, ic.key)
+							elseif attached {NATURAL_64} num as n64 then
+								jo.put_natural (n64, ic.key)
+							elseif attached {NATURAL_32} num as n32 then
+								jo.put_natural (n32, ic.key)
+							elseif attached {NATURAL_16} num as n16 then
+								jo.put_natural (n16, ic.key)
+							elseif attached {NATURAL_8} num as n8 then
+								jo.put_natural (n8, ic.key)
+							elseif attached {REAL_64} num as r64 then
+								jo.put_real (r64, ic.key)
+							elseif attached {REAL_32} num as r32 then
+								jo.put_real (r32, ic.key)
+							else
+								jo.put_integer (num.out.to_integer_64, ic.key)
+							end
+						elseif attached {CHARACTER_8} ic.item as ch8 then
+							jo.put_string (ch8.out, ic.key) -- to be check
+						elseif attached {CHARACTER_32} ic.item as ch32 then
+							jo.put_string (ch32.out, ic.key) -- to be check
+						elseif attached {POINTER} ic.item as ptr then
+							jo.put_integer (ptr.to_integer_32, ic.key)
+						elseif attached {STRING_8} ic.item as str8 then
+							jo.put_string (str8, ic.key)
+						elseif attached {STRING_32} ic.item as str32 then
+							jo.put_string (str32, ic.key)
+						else
+							jo.put (create {JSON_NULL}, ic.key)
+						end
 					end
 				end
 				Result := jo

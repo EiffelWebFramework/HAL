@@ -18,12 +18,13 @@ feature {NONE} -- Initialization
 	make
 		do
 			create file_reader
---			test_json_min
---			test_json_hal
+			test_json_min
+			test_json_hal
 --			test_json_link
---			test_hal
+			test_hal
 			test_item_line_item
 			test_order
+			test_hal_types
 
 			example_from_hal_to_domain
 			test_build_hal_json
@@ -57,10 +58,10 @@ feature {NONE} -- Initialization
 			if attached conv.to_json (l_res) as j then
 				print (j.representation)
 
---				if attached conv.from_json (j) as hal then
---					print (hal)
---					print (friendly_output (hal))
---				end
+				if attached conv.from_json (j) as hal then
+					print (hal)
+					print (friendly_output (hal))
+				end
 			end
 		end
 
@@ -204,6 +205,24 @@ feature {NONE} -- Initialization
 							check
 								ln.rel ~ "next"
 							end
+						end
+					end
+				end
+			end
+		end
+
+	test_hal_types
+		local
+			conv: JSON_HAL_RESOURCE_CONVERTER
+		do
+			create conv.make
+			if attached json_file_from ("hal_example_type.json") as json_file then
+				if attached {JSON_OBJECT} json_value_from_file (json_file) as jo then
+					if attached {HAL_RESOURCE} conv.from_json (jo) as r then
+						print (r.out)
+						print ("%N")
+						if attached conv.to_json (r) as jv then
+							print (jv.representation)
 						end
 					end
 				end
