@@ -200,10 +200,10 @@ feature -- Test routines
 			l_res := json_to_hal ("hal_multi_links.json")
 			assert("Not Void", l_res /= Void)
 			if attached {HAL_RESOURCE} l_res as ll_res then
-				if attached {STRING_32} ll_res.fields_by_key ("name") as l_str then
+				if attached {STRING_32} ll_res.field_by_key ("name") as l_str then
 					assert ("Expected Value: A product", l_str.is_equal ("A product"))
 				end
-				if attached {STRING_32} ll_res.fields_by_key ("weight") as l_str then
+				if attached {STRING_32} ll_res.field_by_key ("weight") as l_str then
 					assert ("Expected Value: A product", l_str.is_equal ("400"))
 				end
 			end

@@ -143,7 +143,7 @@ feature -- Access
 			end
 		end
 
-	fields_by_key (a_key: READABLE_STRING_GENERAL): detachable ANY
+	field_by_key (a_key: READABLE_STRING_GENERAL): detachable ANY
 			-- Return a value, if key `a_key' exists
 			-- Void in othercase
 		do
@@ -205,6 +205,10 @@ feature -- Element Change
 		end
 
 	add_field (key: READABLE_STRING_GENERAL; value: ANY)
+		obsolete
+				"[
+					Use `dd_string_field, add_integer_field, add_real_field, add_natural_field, add_boolean_field, add_null_field [2017-06-20]
+					]"
 		local
 			l_fields: like fields
 		do
@@ -215,6 +219,79 @@ feature -- Element Change
 			end
 			l_fields.force (value, key)
 		end
+
+	add_string_field (key: READABLE_STRING_GENERAL; value: READABLE_STRING_32)
+		local
+			l_fields: like fields
+		do
+			l_fields := fields
+			if l_fields = Void then
+				create l_fields.make (1)
+				fields := l_fields
+			end
+			l_fields.force (value, key)
+		end
+
+	add_integer_field (key: READABLE_STRING_GENERAL; value: INTEGER_64)
+		local
+			l_fields: like fields
+		do
+			l_fields := fields
+			if l_fields = Void then
+				create l_fields.make (1)
+				fields := l_fields
+			end
+			l_fields.force (value, key)
+		end
+
+	add_real_field (key: READABLE_STRING_GENERAL; value: REAL_64)
+		local
+			l_fields: like fields
+		do
+			l_fields := fields
+			if l_fields = Void then
+				create l_fields.make (1)
+				fields := l_fields
+			end
+			l_fields.force (value, key)
+		end
+
+	add_natural_field (key: READABLE_STRING_GENERAL; value: NATURAL_64)
+		local
+			l_fields: like fields
+		do
+			l_fields := fields
+			if l_fields = Void then
+				create l_fields.make (1)
+				fields := l_fields
+			end
+			l_fields.force (value, key)
+		end
+
+	add_boolean_field (key: READABLE_STRING_GENERAL; value: BOOLEAN)
+		local
+			l_fields: like fields
+		do
+			l_fields := fields
+			if l_fields = Void then
+				create l_fields.make (1)
+				fields := l_fields
+			end
+			l_fields.force (value, key)
+		end
+
+	add_null_field (key: READABLE_STRING_GENERAL)
+		local
+			l_fields: like fields
+		do
+			l_fields := fields
+			if l_fields = Void then
+				create l_fields.make (1)
+				fields := l_fields
+			end
+			l_fields.force ("null", key)
+		end
+
 
 	add_embedded_resource_with_key (key: READABLE_STRING_GENERAL; res: HAL_RESOURCE)
 		local

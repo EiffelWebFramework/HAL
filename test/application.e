@@ -18,16 +18,17 @@ feature {NONE} -- Initialization
 	make
 		do
 			create file_reader
-			test_json_min
-			test_json_hal
---			test_json_link
-			test_hal
-			test_item_line_item
-			test_order
-			test_hal_types
+--			test_json_min
+--			test_json_hal
+----			test_json_link
+--			test_hal
+--			test_item_line_item
+--			test_order
+--			test_hal_types
+			test_example_with_nested_objects
 
-			example_from_hal_to_domain
-			test_build_hal_json
+--			example_from_hal_to_domain
+--			test_build_hal_json
 		end
 
 	test_build_hal_json
@@ -101,19 +102,19 @@ feature {NONE} -- Initialization
 							loop
 								l_res:= l_r.item_for_iteration
 
-					            if attached {STRING} l_res.fields_by_key ("currency") as l_ucs then
+					            if attached {STRING} l_res.field_by_key ("currency") as l_ucs then
 					            	l_currency := l_ucs
 					            	print ("Currency:" + l_currency)
 					            	io.put_new_line
 					            end
 
-					            if attached {STRING} l_res.fields_by_key ("status") as l_ucs then
+					            if attached {STRING} l_res.field_by_key ("status") as l_ucs then
 					            	l_status := l_ucs
 									print ("Status:" + l_status )
 									io.put_new_line
 								end
 
-								if attached {STRING} l_res.fields_by_key ("placed") as l_ucs then
+								if attached {STRING} l_res.field_by_key ("placed") as l_ucs then
 					            	l_placed := l_ucs
 					            	print ("Placed:" + l_placed )
 					            	io.put_new_line
@@ -228,6 +229,25 @@ feature {NONE} -- Initialization
 				end
 			end
 		end
+
+	test_example_with_nested_objects
+		local
+			conv: JSON_HAL_RESOURCE_CONVERTER
+		do
+			create conv.make
+			if attached json_file_from ("exampleWithNestedObjects.json") as json_file then
+				if attached {JSON_OBJECT} json_value_from_file (json_file) as jo then
+					if attached {HAL_RESOURCE} conv.from_json (jo) as r then
+						print (r.out)
+						print ("%N")
+						if attached conv.to_json (r) as jv then
+							print (jv.representation)
+						end
+					end
+				end
+			end
+		end
+
 
 	test_json_hal
 			--

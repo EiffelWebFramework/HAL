@@ -18,6 +18,7 @@ feature -- Conversion
 		local
 			l_list: LIST [HAL_RESOURCE]
 			js: JSON_STRING
+
 		do
 			if attached {JSON_OBJECT} a_json as j then
 				create Result.make
@@ -30,21 +31,22 @@ feature -- Conversion
 						attached j.item (js) as j_rep
 					then
 						if attached {JSON_STRING} j_rep as js_rep then
-							Result.add_field (js.item, js_rep.unescaped_string_32)
+							Result.add_string_field (js.item, js_rep.unescaped_string_32)
 						elseif attached {JSON_NUMBER} j_rep as jn_rep then
 							if jn_rep.is_integer then
-								Result.add_field (js.item, jn_rep.integer_64_item)
+								Result.add_integer_field (js.item, jn_rep.integer_64_item)
 							elseif jn_rep.is_double then
-								Result.add_field (js.item, jn_rep.real_64_item)
+								Result.add_real_field (js.item, jn_rep.real_64_item)
 							else -- natural	
-								Result.add_field (js.item, jn_rep.natural_64_item)
+								Result.add_natural_field (js.item, jn_rep.natural_64_item)
 							end
 						elseif attached {JSON_BOOLEAN} j_rep as jb_rep then
-							Result.add_field (js.item, jb_rep.item)
+							Result.add_boolean_field (js.item, jb_rep.item)
 						elseif attached {JSON_NULL} j_rep as jnull then
-							Result.add_field (js.item, "null")
+							Result.add_null_field (js.item)
 						else
-							Result.add_field (js.item, j_rep.representation)
+								-- !TODO check how to handle JSON_ARRAY and JSON_OBJECTS.
+							Result.add_string_field (js.item, j_rep.representation)
 						end
 					end
 				end

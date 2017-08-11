@@ -53,6 +53,7 @@ feature -- Convertion
 							elseif attached {REAL_32} num as r32 then
 								jo.put_real (r32, ic.key)
 							else
+								check is_basic_numeric_type: False end
 								jo.put_integer (num.out.to_integer_64, ic.key)
 							end
 						elseif attached {CHARACTER_8} ic.item as ch8 then
