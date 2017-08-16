@@ -29,46 +29,7 @@ feature -- Convertion
 					across
 						l_fields as ic
 					loop
-						if attached {BOOLEAN} ic.item as bool then
-							jo.put_boolean (bool, ic.key)
-						elseif attached {NUMERIC} ic.item as num then
-							if attached {INTEGER_64} num as i64 then
-								jo.put_integer (i64, ic.key)
-							elseif attached {INTEGER_32} num as i32 then
-								jo.put_integer (i32, ic.key)
-							elseif attached {INTEGER_16} num as i16 then
-								jo.put_integer (i16, ic.key)
-							elseif attached {INTEGER_8} num as i8 then
-								jo.put_integer (i8, ic.key)
-							elseif attached {NATURAL_64} num as n64 then
-								jo.put_natural (n64, ic.key)
-							elseif attached {NATURAL_32} num as n32 then
-								jo.put_natural (n32, ic.key)
-							elseif attached {NATURAL_16} num as n16 then
-								jo.put_natural (n16, ic.key)
-							elseif attached {NATURAL_8} num as n8 then
-								jo.put_natural (n8, ic.key)
-							elseif attached {REAL_64} num as r64 then
-								jo.put_real (r64, ic.key)
-							elseif attached {REAL_32} num as r32 then
-								jo.put_real (r32, ic.key)
-							else
-								check is_basic_numeric_type: False end
-								jo.put_integer (num.out.to_integer_64, ic.key)
-							end
-						elseif attached {CHARACTER_8} ic.item as ch8 then
-							jo.put_string (ch8.out, ic.key) -- to be check
-						elseif attached {CHARACTER_32} ic.item as ch32 then
-							jo.put_string (ch32.out, ic.key) -- to be check
-						elseif attached {POINTER} ic.item as ptr then
-							jo.put_integer (ptr.to_integer_32, ic.key)
-						elseif attached {STRING_8} ic.item as str8 then
-							jo.put_string (str8, ic.key)
-						elseif attached {STRING_32} ic.item as str32 then
-							jo.put_string (str32, ic.key)
-						else
-							jo.put (create {JSON_NULL}, ic.key)
-						end
+						jo.put (to_json_value (ic.item), ic.key)
 					end
 				end
 				Result := jo
@@ -184,6 +145,28 @@ feature {NONE} -- Converter implementation
 				Result.put_string (l_profile, profile_key)
 			end
 
+		end
+
+	to_json_value (a_obj: ANY): JSON_VALUE
+			-- Convert an object `a_obj' to JSON_VALUE representation.
+		local
+			obj: ANY
+			conv_to: JSON_REFLECTOR_SERIALIZER
+			ctx: detachable JSON_SERIALIZER_CONTEXT
+			s: STRING
+		do
+			obj := a_obj
+
+				-- Auto serialization, handling table iterable as JSON Object, and iterable as ARRAY. Without typename.
+			create conv_to
+			create ctx
+			ctx.set_pretty_printing
+			ctx.set_is_type_name_included (False)
+			ctx.set_default_serializer (create {JSON_REFLECTOR_SERIALIZER})
+			ctx.register_serializer (create {TABLE_ITERABLE_JSON_SERIALIZER [detachable ANY, READABLE_STRING_GENERAL]}, {TABLE_ITERABLE [detachable ANY, READABLE_STRING_GENERAL]})
+			ctx.register_serializer (create {ITERABLE_JSON_SERIALIZER [detachable ANY]}, {ITERABLE [detachable ANY]})
+
+			Result := conv_to.to_json (obj, ctx)
 		end
 
 feature {NONE} -- Implementation: RESOURCE

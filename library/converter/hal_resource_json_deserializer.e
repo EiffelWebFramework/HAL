@@ -18,7 +18,10 @@ feature -- Conversion
 		local
 			l_list: LIST [HAL_RESOURCE]
 			js: JSON_STRING
-
+			l_any: detachable ANY
+			err: DEVELOPER_EXCEPTION
+			l_table: STRING_TABLE [ANY]
+			l_array: ARRAY [ANY]
 		do
 			if attached {JSON_OBJECT} a_json as j then
 				create Result.make
@@ -45,8 +48,20 @@ feature -- Conversion
 						elseif attached {JSON_NULL} j_rep as jnull then
 							Result.add_null_field (js.item)
 						else
-								-- !TODO check how to handle JSON_ARRAY and JSON_OBJECTS.
-							Result.add_string_field (js.item, j_rep.representation)
+								-- HAL reference fields: JSON_OBJECT or JSON_ARRAY
+							if attached {JSON_OBJECT} j_rep as j_object then
+								create l_table.make (1)
+								add_reference_field (j_object, l_table)
+								Result.add_object_field (js.item, l_table)
+							elseif attached {JSON_ARRAY} j_rep as j_array  then
+								create l_array.make_filled ({ANY}, 1, j_array.count)
+								add_reference_field (j_array, l_array)
+								Result.add_array_field (js.item, l_array)
+							else
+								-- Unexpected value
+								create err
+								err.set_description ("Unexpected JSON representation: [ " + j_rep.representation + " ]")
+							end
 						end
 					end
 				end
@@ -155,6 +170,102 @@ feature {NONE} -- Converter implementation
 				end
 				if attached {JSON_STRING} j.item (profile_key) as j_profile then
 					Result.set_profile (j_profile.item)
+				end
+			end
+		end
+
+	add_reference_field (a_object: JSON_VALUE; a_reference: ANY )
+			-- Add hal Reference fields
+			-- JSON_OBJECTS or JSON_ARRAYS.
+		local
+			js: JSON_STRING
+			l_table: STRING_TABLE [ANY]
+			l_array: ARRAY [ANY]
+			err: DEVELOPER_EXCEPTION
+			i: INTEGER
+		do
+			if
+				attached {JSON_OBJECT} a_object as j and then
+				attached {STRING_TABLE [ANY]} a_reference as a_table
+			then
+				across
+					j.current_keys as ic
+				loop
+					js := ic.item
+					if
+						attached j.item (js) as j_rep
+					then
+						if attached {JSON_STRING} j_rep as js_rep then
+							a_table.force (js_rep.unescaped_string_32, js.item)
+						elseif attached {JSON_NUMBER} j_rep as jn_rep then
+							if jn_rep.is_integer then
+								a_table.force (jn_rep.integer_64_item, js.item)
+							elseif jn_rep.is_double then
+								a_table.force (jn_rep.real_64_item, js.item)
+							else -- natural	
+								a_table.force (jn_rep.natural_64_item, js.item)
+							end
+						elseif attached {JSON_BOOLEAN} j_rep as jb_rep then
+							a_table.force (jb_rep.item, js.item)
+						elseif attached {JSON_NULL} j_rep as jnull then
+							a_table.force ("null",js.item)
+						else
+								-- JSON_OBJECT
+							if attached {JSON_OBJECT} j_rep as j_object then
+								create l_table.make (1)
+								add_reference_field (j_object, l_table)
+								a_table.force (l_table, js.item)
+								-- JSON_ARRAY
+							elseif attached {JSON_ARRAY} j_rep as j_array  then
+								create l_array.make_filled ({ANY}, 1, j_array.count)
+								add_reference_field (j_array, l_array)
+								a_table.force (l_array, js.item)
+							else
+								-- Unexpected value
+								create err
+								err.set_description ("Unexpected JSON representation: [ " + j_rep.representation + " ]")
+							end
+						end
+					end
+				end
+			elseif
+				attached {JSON_ARRAY} a_object as j_array and then
+				attached {ARRAY [ANY]} a_reference as a_array
+			then
+				i := 1
+				across j_array as ic  loop
+					if attached {JSON_STRING} ic.item as js_rep then
+						a_array.force (js_rep, i)
+					elseif attached {JSON_NUMBER} ic.item as jn_rep then
+						if jn_rep.is_integer then
+							a_array.force (jn_rep.integer_64_item, i)
+						elseif jn_rep.is_double then
+							a_array.force (jn_rep.real_64_item, i)
+						else -- natural	
+							a_array.force (jn_rep.natural_64_item, i)
+						end
+					elseif attached {JSON_BOOLEAN} ic.item as jb_rep then
+						a_array.force (jb_rep.item, i)
+					elseif attached {JSON_NULL} ic.item as jnull then
+						a_array.force ("null", i)
+					else
+							-- JSON_OBJECT
+						if attached {JSON_OBJECT} ic.item as j_object then
+							create l_table.make (1)
+							add_reference_field (ic.item, l_table)
+							a_array.force (l_table, i)
+							-- JSON_ARRAY
+						elseif attached {JSON_ARRAY} ic.item as j_arr  then
+							create l_array.make_filled ({ANY}, 1, j_array.count)
+							add_reference_field (j_array, l_array)
+							a_array.force (l_array, i)
+						else
+							-- Unexpected value
+							create err
+							err.set_description ("Unexpected JSON representation: [ " + ic.item.representation + " ]")
+						end
+					end
+					i := i + 1
 				end
 			end
 		end

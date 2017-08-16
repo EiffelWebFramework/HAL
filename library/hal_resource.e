@@ -152,6 +152,175 @@ feature -- Access
 			end
 		end
 
+	field_integer_by_key (a_key: READABLE_STRING_GENERAL): INTEGER_64
+			-- Return a value, if key `a_key' exists and is integer.
+		require
+			is_field_integer: field_is_integer (a_key)
+		do
+			if
+				attached fields as l_fields and then
+				attached {INTEGER_64} l_fields [a_key] as l_value
+			then
+				Result := l_value
+			end
+		end
+
+	field_real_by_key (a_key: READABLE_STRING_GENERAL): REAL_64
+			-- Return a value, if key `a_key' exists and is real.
+		require
+			is_field_integer: field_is_real (a_key)
+		do
+			if
+				attached fields as l_fields and then
+				attached {REAL_64} l_fields [a_key] as l_value
+			then
+				Result := l_value
+			end
+		end
+
+	field_natural_by_key (a_key: READABLE_STRING_GENERAL): NATURAL_64
+			-- Return a value, if key `a_key' exists and is natural.
+		require
+			is_field_integer: field_is_natural (a_key)
+		do
+			if
+				attached fields as l_fields and then
+				attached {NATURAL_64} l_fields [a_key] as l_value
+			then
+				Result := l_value
+			end
+		end
+
+	field_boolean_by_key (a_key: READABLE_STRING_GENERAL): BOOLEAN
+			-- Return a value, if key `a_key' exists and is boolean.
+		require
+			is_field_integer: field_is_boolean (a_key)
+		do
+			if
+				attached fields as l_fields and then
+				attached {BOOLEAN} l_fields [a_key] as l_value
+			then
+				Result := l_value
+			end
+		end
+
+	field_string_by_key (a_key: READABLE_STRING_GENERAL): detachable STRING_32
+			-- Return a value, if key `a_key' exists and is string.
+		require
+			is_field_integer: field_is_string (a_key)
+		do
+			if
+				attached fields as l_fields and then
+				attached {READABLE_STRING_32} l_fields [a_key] as l_value
+			then
+				Result := l_value
+			end
+		end
+
+	field_object_by_key (a_key: READABLE_STRING_GENERAL): detachable STRING_TABLE [ANY]
+			-- Return a value, if key `a_key' exists and is an object reference.
+		require
+			is_field_integer: field_is_object (a_key)
+		do
+			if
+				attached fields as l_fields and then
+				attached {STRING_TABLE [ANY]} l_fields [a_key] as l_value
+			then
+				Result := l_value
+			end
+		end
+
+	field_array_by_key (a_key: READABLE_STRING_GENERAL): detachable ARRAY [ANY]
+			-- Return a value, if key `a_key' exists and is an array reference.
+		require
+			is_field_integer: field_is_array (a_key)
+		do
+			if
+				attached fields as l_fields and then
+				attached {ARRAY [ANY]} l_fields [a_key] as l_value
+			then
+				Result := l_value
+			end
+		end
+
+feature -- Status Report
+
+	field_is_integer (a_key: READABLE_STRING_GENERAL): BOOLEAN
+			-- is the field `a_key' integer?
+		do
+			if
+				attached fields as l_fields and then
+				attached {INTEGER_64} l_fields [a_key]
+			then
+				Result := True
+			end
+		end
+
+	field_is_real (a_key: READABLE_STRING_GENERAL): BOOLEAN
+			-- is the field `a_key' real?
+		do
+			if
+				attached fields as l_fields and then
+				attached {REAL_64} l_fields [a_key]
+			then
+				Result := True
+			end
+		end
+
+	field_is_natural (a_key: READABLE_STRING_GENERAL): BOOLEAN
+			-- is the field `a_key' natural?
+		do
+			if
+				attached fields as l_fields and then
+				attached {NATURAL_64} l_fields [a_key]
+			then
+				Result := True
+			end
+		end
+
+	field_is_boolean (a_key: READABLE_STRING_GENERAL): BOOLEAN
+			-- is the field `a_key' boolean?
+		do
+			if
+				attached fields as l_fields and then
+				attached {BOOLEAN} l_fields [a_key]
+			then
+				Result := True
+			end
+		end
+
+	field_is_string (a_key: READABLE_STRING_GENERAL): BOOLEAN
+			-- is the field `a_key' string?
+		do
+			if
+				attached fields as l_fields and then
+				attached {READABLE_STRING_32} l_fields [a_key]
+			then
+				Result := True
+			end
+		end
+
+	field_is_object (a_key: READABLE_STRING_GENERAL): BOOLEAN
+			-- is the field `a_key' string_table?
+		do
+			if
+				attached fields as l_fields and then
+				attached {STRING_TABLE [ANY]} l_fields [a_key]
+			then
+				Result := True
+			end
+		end
+
+	field_is_array (a_key: READABLE_STRING_GENERAL): BOOLEAN
+			-- is the field `a_key' array?
+		do
+			if
+				attached fields as l_fields and then
+				attached {ARRAY [ANY]} l_fields [a_key]
+			then
+				Result := True
+			end
+		end
 
 feature -- Element Change
 
@@ -292,6 +461,29 @@ feature -- Element Change
 			l_fields.force ("null", key)
 		end
 
+	add_array_field (key: READABLE_STRING_GENERAL; a_array: ARRAY [ANY])
+		local
+			l_fields: like fields
+		do
+			l_fields := fields
+			if l_fields = Void then
+				create l_fields.make (1)
+				fields := l_fields
+			end
+			l_fields.force (a_array, key)
+		end
+
+	add_object_field (key: READABLE_STRING_GENERAL; a_object: STRING_TABLE [ANY])
+		local
+			l_fields: like fields
+		do
+			l_fields := fields
+			if l_fields = Void then
+				create l_fields.make (1)
+				fields := l_fields
+			end
+			l_fields.force (a_object, key)
+		end
 
 	add_embedded_resource_with_key (key: READABLE_STRING_GENERAL; res: HAL_RESOURCE)
 		local

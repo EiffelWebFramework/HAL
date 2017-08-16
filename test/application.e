@@ -18,17 +18,17 @@ feature {NONE} -- Initialization
 	make
 		do
 			create file_reader
---			test_json_min
---			test_json_hal
-----			test_json_link
---			test_hal
---			test_item_line_item
---			test_order
---			test_hal_types
+			test_json_min
+			test_json_hal
+--			test_json_link
+			test_hal
+			test_item_line_item
+			test_order
+			test_hal_types
 			test_example_with_nested_objects
 
---			example_from_hal_to_domain
---			test_build_hal_json
+			example_from_hal_to_domain
+			test_build_hal_json
 		end
 
 	test_build_hal_json
@@ -243,6 +243,30 @@ feature {NONE} -- Initialization
 						if attached conv.to_json (r) as jv then
 							print (jv.representation)
 						end
+							-- expired is BOOLEAN
+						if r.field_is_integer ("expired") then
+							print ("%N")
+							print (r.field_integer_by_key ("expired").out)
+						end
+						if r.field_is_boolean ("expired") then
+							print ("%N")
+							print (r.field_boolean_by_key ("expired").out)
+						end
+							-- Integer
+						if r.field_is_integer ("age") then
+							print ("%N")
+							print (r.field_integer_by_key ("age").out)
+						end
+							-- Array with String table
+						if r.field_is_array ("children") then
+							if attached r.field_array_by_key ("children") as l_array then
+								across l_array as ic loop
+									print ("%N")
+									print (ic.item.out)
+								end
+							end
+						end
+
 					end
 				end
 			end
