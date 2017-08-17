@@ -27,8 +27,8 @@ feature {NONE} -- Initialization
 			test_hal_types
 			test_example_with_nested_objects
 
-			example_from_hal_to_domain
-			test_build_hal_json
+--			example_from_hal_to_domain
+--			test_build_hal_json
 		end
 
 	test_build_hal_json
@@ -244,25 +244,28 @@ feature {NONE} -- Initialization
 							print (jv.representation)
 						end
 							-- expired is BOOLEAN
-						if r.field_is_integer ("expired") then
+						if r.is_integer_field ("expired") then
 							print ("%N")
-							print (r.field_integer_by_key ("expired").out)
+							print (r.integer_field_by_key ("expired").out)
 						end
-						if r.field_is_boolean ("expired") then
+						if r.is_boolean_field ("expired") then
 							print ("%N")
-							print (r.field_boolean_by_key ("expired").out)
+							print (r.boolean_field_by_key ("expired").out)
 						end
 							-- Integer
-						if r.field_is_integer ("age") then
+						if r.is_integer_field ("age") then
 							print ("%N")
-							print (r.field_integer_by_key ("age").out)
+							print (r.integer_field_by_key ("age").out)
 						end
 							-- Array with String table
-						if r.field_is_array ("children") then
-							if attached r.field_array_by_key ("children") as l_array then
+						if r.is_array_field ("children") then
+							if attached r.array_field_by_key ("children") as l_array then
 								across l_array as ic loop
 									print ("%N")
-									print (ic.item.out)
+									if attached ic.item as l_item then
+										print (l_item.out)
+									end
+
 								end
 							end
 						end

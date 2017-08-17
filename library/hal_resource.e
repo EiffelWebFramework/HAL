@@ -24,7 +24,7 @@ feature {NONE} -- Initialization
 		end
 
 	make_with_link (a_link: HAL_LINK)
-			-- Create a new resource with his self.link `a_link'
+			-- Create a new resource with his self.link `a_link'.
 		do
 			make
 			add_link_with_key ("self", a_link)
@@ -118,8 +118,7 @@ feature -- Access
 		end
 
 	embedded_resources_keys: detachable ARRAY [READABLE_STRING_GENERAL]
-			-- Retrieve an arrray of resource keys, if exist,
-			-- Void in othercase
+			-- Retrieve an arrray of resource keys, if exist,Void in other case.
 		do
 			if attached embedded_resource as er then
 				Result := er.current_keys
@@ -127,7 +126,7 @@ feature -- Access
 		end
 
 	embedded_resources_by_key (a_key: READABLE_STRING_GENERAL): detachable LIST [HAL_RESOURCE]
-			-- Return a list embedded resources if it exist or Void in other case
+			-- Return a list embedded resources if it exist or Void in other case.
 		do
 			if attached embedded_resource as er then
 				Result := er [a_key]
@@ -135,109 +134,110 @@ feature -- Access
 		end
 
 	fields_keys: detachable ARRAY [READABLE_STRING_GENERAL]
-			-- Return an array of fields keys if exist,
-			-- Void in othercase
+			-- Return an array of fields keys if exist, Void in other case.
 		do
 			if attached fields as p then
 				Result := p.current_keys
 			end
 		end
 
+	fields_by_key (a_key: READABLE_STRING_GENERAL): detachable READABLE_STRING_32
+			-- Return a string value, if key `a_key' exists, Void in other case.
+		obsolete
+			"Use *_field_by_key [2017-11-31]."
+		do
+			if attached {STRING_32} field_by_key (a_key) as l_value then
+				Result := l_value
+			end
+		end
+
 	field_by_key (a_key: READABLE_STRING_GENERAL): detachable ANY
-			-- Return a value, if key `a_key' exists
-			-- Void in othercase
+			-- Return a value, if key `a_key' exists, Void in other case.
 		do
 			if attached fields as l_fields then
 				Result := l_fields [a_key]
 			end
 		end
 
-	field_integer_by_key (a_key: READABLE_STRING_GENERAL): INTEGER_64
+	integer_field_by_key (a_key: READABLE_STRING_GENERAL): INTEGER_64
 			-- Return a value, if key `a_key' exists and is integer.
 		require
-			is_field_integer: field_is_integer (a_key)
+			is_field_integer: is_integer_field (a_key)
 		do
 			if
-				attached fields as l_fields and then
-				attached {INTEGER_64} l_fields [a_key] as l_value
+				attached {INTEGER_64} field_by_key (a_key) as l_value
 			then
 				Result := l_value
 			end
 		end
 
-	field_real_by_key (a_key: READABLE_STRING_GENERAL): REAL_64
+	real_field_by_key (a_key: READABLE_STRING_GENERAL): REAL_64
 			-- Return a value, if key `a_key' exists and is real.
 		require
-			is_field_integer: field_is_real (a_key)
+			is_field_integer: is_real_field (a_key)
 		do
 			if
-				attached fields as l_fields and then
-				attached {REAL_64} l_fields [a_key] as l_value
+				attached {REAL_64} field_by_key (a_key) as l_value
 			then
 				Result := l_value
 			end
 		end
 
-	field_natural_by_key (a_key: READABLE_STRING_GENERAL): NATURAL_64
+	natural_field_by_key (a_key: READABLE_STRING_GENERAL): NATURAL_64
 			-- Return a value, if key `a_key' exists and is natural.
 		require
-			is_field_integer: field_is_natural (a_key)
+			is_field_integer: is_natural_field (a_key)
 		do
 			if
-				attached fields as l_fields and then
-				attached {NATURAL_64} l_fields [a_key] as l_value
+				attached {NATURAL_64} field_by_key (a_key) as l_value
 			then
 				Result := l_value
 			end
 		end
 
-	field_boolean_by_key (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	boolean_field_by_key (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- Return a value, if key `a_key' exists and is boolean.
 		require
-			is_field_integer: field_is_boolean (a_key)
+			is_field_integer: is_boolean_field (a_key)
 		do
 			if
-				attached fields as l_fields and then
-				attached {BOOLEAN} l_fields [a_key] as l_value
+				attached {BOOLEAN} field_by_key (a_key) as l_value
 			then
 				Result := l_value
 			end
 		end
 
-	field_string_by_key (a_key: READABLE_STRING_GENERAL): detachable STRING_32
+	string_field_by_key (a_key: READABLE_STRING_GENERAL): detachable STRING_32
 			-- Return a value, if key `a_key' exists and is string.
 		require
-			is_field_integer: field_is_string (a_key)
+			is_field_integer: is_string_field (a_key)
 		do
 			if
-				attached fields as l_fields and then
-				attached {READABLE_STRING_32} l_fields [a_key] as l_value
+				attached {READABLE_STRING_32} field_by_key (a_key) as l_value
 			then
 				Result := l_value
 			end
 		end
 
-	field_object_by_key (a_key: READABLE_STRING_GENERAL): detachable STRING_TABLE [ANY]
+	object_field_by_key (a_key: READABLE_STRING_GENERAL): detachable STRING_TABLE [detachable ANY]
 			-- Return a value, if key `a_key' exists and is an object reference.
 		require
-			is_field_integer: field_is_object (a_key)
+			is_field_integer: is_object_field (a_key)
 		do
 			if
-				attached fields as l_fields and then
-				attached {STRING_TABLE [ANY]} l_fields [a_key] as l_value
+				attached {STRING_TABLE [detachable ANY]} field_by_key (a_key) as l_value
 			then
 				Result := l_value
 			end
 		end
 
-	field_array_by_key (a_key: READABLE_STRING_GENERAL): detachable ARRAY [ANY]
+	array_field_by_key (a_key: READABLE_STRING_GENERAL): detachable ARRAY [detachable ANY]
 			-- Return a value, if key `a_key' exists and is an array reference.
 		require
-			is_field_integer: field_is_array (a_key)
+			is_field_integer: is_array_field (a_key)
 		do
 			if
-				attached fields as l_fields and then
-				attached {ARRAY [ANY]} l_fields [a_key] as l_value
+				attached {ARRAY [detachable ANY]} field_by_key (a_key) as l_value
 			then
 				Result := l_value
 			end
@@ -245,78 +245,71 @@ feature -- Access
 
 feature -- Status Report
 
-	field_is_integer (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	is_integer_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- is the field `a_key' integer?
 		do
 			if
-				attached fields as l_fields and then
-				attached {INTEGER_64} l_fields [a_key]
+				attached {INTEGER_64} field_by_key (a_key)
 			then
 				Result := True
 			end
 		end
 
-	field_is_real (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	is_real_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- is the field `a_key' real?
 		do
 			if
-				attached fields as l_fields and then
-				attached {REAL_64} l_fields [a_key]
+				attached {REAL_64} field_by_key (a_key)
 			then
 				Result := True
 			end
 		end
 
-	field_is_natural (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	is_natural_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- is the field `a_key' natural?
 		do
 			if
-				attached fields as l_fields and then
-				attached {NATURAL_64} l_fields [a_key]
+				attached {NATURAL_64} field_by_key (a_key)
 			then
 				Result := True
 			end
 		end
 
-	field_is_boolean (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	is_boolean_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- is the field `a_key' boolean?
 		do
 			if
-				attached fields as l_fields and then
-				attached {BOOLEAN} l_fields [a_key]
+				attached {BOOLEAN} field_by_key (a_key)
 			then
 				Result := True
 			end
 		end
 
-	field_is_string (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	is_string_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- is the field `a_key' string?
 		do
 			if
-				attached fields as l_fields and then
-				attached {READABLE_STRING_32} l_fields [a_key]
+				attached {READABLE_STRING_32} field_by_key (a_key)
 			then
 				Result := True
 			end
 		end
 
-	field_is_object (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	is_object_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- is the field `a_key' string_table?
 		do
 			if
-				attached fields as l_fields and then
-				attached {STRING_TABLE [ANY]} l_fields [a_key]
+				attached {STRING_TABLE [detachable ANY]} field_by_key (a_key)
 			then
 				Result := True
 			end
 		end
 
-	field_is_array (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	is_array_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- is the field `a_key' array?
 		do
 			if
-				attached fields as l_fields and then
-				attached {ARRAY [ANY]} l_fields [a_key]
+				attached {ARRAY [detachable ANY]} field_by_key (a_key)
 			then
 				Result := True
 			end
@@ -325,6 +318,7 @@ feature -- Status Report
 feature -- Element Change
 
 	add_all_links (all_link: STRING_TABLE [HAL_LINK])
+			-- add all_links `all_link' to `links'.
 		do
 			across
 				all_link as ic
@@ -357,27 +351,27 @@ feature -- Element Change
 		end
 
 	add_link (a_link: HAL_LINK)
+			-- Add a link `a_link' to the `links'.
 		do
 			add_link_with_key (a_link.rel, a_link)
 		end
 
 	add_curie_link (a_attribute: HAL_LINK_ATTRIBUTE)
+			-- Add a curie link `a_atribute' to `links'.
 		do
 			add_link_with_key ("curies", create {HAL_LINK}.make_with_attribute ("curies", a_attribute))
 		end
 
 	add_fields (key: READABLE_STRING_GENERAL; value: ANY)
 		obsolete
-			"Use `add_field` [2017-06-20]"
+			"Use `add_field` [2017-06-20]."
 		do
 			add_field (key, value)
 		end
 
 	add_field (key: READABLE_STRING_GENERAL; value: ANY)
 		obsolete
-				"[
-					Use `dd_string_field, add_integer_field, add_real_field, add_natural_field, add_boolean_field, add_null_field [2017-06-20]
-					]"
+				"Use `add_*_field [2017-06-20]."
 		local
 			l_fields: like fields
 		do
@@ -461,7 +455,7 @@ feature -- Element Change
 			l_fields.force ("null", key)
 		end
 
-	add_array_field (key: READABLE_STRING_GENERAL; a_array: ARRAY [ANY])
+	add_array_field (key: READABLE_STRING_GENERAL; a_array: ARRAY [detachable ANY])
 		local
 			l_fields: like fields
 		do
@@ -473,7 +467,7 @@ feature -- Element Change
 			l_fields.force (a_array, key)
 		end
 
-	add_object_field (key: READABLE_STRING_GENERAL; a_object: STRING_TABLE [ANY])
+	add_object_field (key: READABLE_STRING_GENERAL; a_object: STRING_TABLE [detachable ANY])
 		local
 			l_fields: like fields
 		do
@@ -531,7 +525,7 @@ feature {HAL_ACCESS} -- Implementation
 	embedded_resource: detachable STRING_TABLE [LIST [HAL_RESOURCE]]
 			-- expressing the embedded nature of a given part of the representation.
 
-	fields: detachable STRING_TABLE [ANY]
+	fields: detachable STRING_TABLE [detachable ANY]
 			-- Properties representing current state of Current resource.
 
 

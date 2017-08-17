@@ -19,9 +19,8 @@ feature -- Conversion
 			l_list: LIST [HAL_RESOURCE]
 			js: JSON_STRING
 			l_any: detachable ANY
-			err: DEVELOPER_EXCEPTION
-			l_table: STRING_TABLE [ANY]
-			l_array: ARRAY [ANY]
+			l_table: STRING_TABLE [detachable ANY]
+			l_array: ARRAY [detachable ANY]
 		do
 			if attached {JSON_OBJECT} a_json as j then
 				create Result.make
@@ -58,9 +57,7 @@ feature -- Conversion
 								add_reference_field (j_array, l_array)
 								Result.add_array_field (js.item, l_array)
 							else
-								-- Unexpected value
-								create err
-								err.set_description ("Unexpected JSON representation: [ " + j_rep.representation + " ]")
+								on_unexpected_value ("Unexpected JSON representation: [ " + j_rep.representation + " ]")
 							end
 						end
 					end
@@ -98,6 +95,19 @@ feature -- Conversion
 					end
 				end
 			end
+		end
+
+
+feature {NONE} -- Error
+
+	on_unexpected_value (a_message: READABLE_STRING_32)
+			-- Raise a developer exception with message `a_message'.s
+		local
+			err: DEVELOPER_EXCEPTION
+		do
+				-- Unexpected value
+			create err
+			err.set_description (a_message)
 		end
 
 feature {NONE} -- Converter implementation
@@ -174,19 +184,22 @@ feature {NONE} -- Converter implementation
 			end
 		end
 
-	add_reference_field (a_object: JSON_VALUE; a_reference: ANY )
-			-- Add hal Reference fields
-			-- JSON_OBJECTS or JSON_ARRAYS.
+	add_reference_field (a_value: JSON_VALUE; a_reference: ANY )
+			-- Add the field represented by `a_value' (a JSON_OBJECT or JSON_ARRAY)
+			-- into the corresponding `a_reference' data structure (STRING_TABLE [ANY]
+			-- or ARRAY [ANY]).
+			-- Raise a developer exception if it found an unexpected value.
+
 		local
 			js: JSON_STRING
-			l_table: STRING_TABLE [ANY]
-			l_array: ARRAY [ANY]
+			l_table: STRING_TABLE [detachable ANY]
+			l_array: ARRAY [detachable ANY]
 			err: DEVELOPER_EXCEPTION
 			i: INTEGER
 		do
 			if
-				attached {JSON_OBJECT} a_object as j and then
-				attached {STRING_TABLE [ANY]} a_reference as a_table
+				attached {JSON_OBJECT} a_value as j and then
+				attached {STRING_TABLE [detachable ANY]} a_reference as a_table
 			then
 				across
 					j.current_keys as ic
@@ -221,16 +234,15 @@ feature {NONE} -- Converter implementation
 								add_reference_field (j_array, l_array)
 								a_table.force (l_array, js.item)
 							else
-								-- Unexpected value
-								create err
-								err.set_description ("Unexpected JSON representation: [ " + j_rep.representation + " ]")
+									-- Unexpected value
+								on_unexpected_value ("Unexpected JSON representation: [ " + j_rep.representation + " ]")
 							end
 						end
 					end
 				end
 			elseif
-				attached {JSON_ARRAY} a_object as j_array and then
-				attached {ARRAY [ANY]} a_reference as a_array
+				attached {JSON_ARRAY} a_value as j_array and then
+				attached {ARRAY [detachable ANY]} a_reference as a_array
 			then
 				i := 1
 				across j_array as ic  loop
@@ -260,9 +272,8 @@ feature {NONE} -- Converter implementation
 							add_reference_field (j_array, l_array)
 							a_array.force (l_array, i)
 						else
-							-- Unexpected value
-							create err
-							err.set_description ("Unexpected JSON representation: [ " + ic.item.representation + " ]")
+								-- Unexpected value
+							on_unexpected_value ("Unexpected JSON representation: [ " + ic.item.representation + " ]")
 						end
 					end
 					i := i + 1

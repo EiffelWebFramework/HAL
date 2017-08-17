@@ -147,7 +147,7 @@ feature {NONE} -- Converter implementation
 
 		end
 
-	to_json_value (a_obj: ANY): JSON_VALUE
+	to_json_value (a_obj: detachable ANY): JSON_VALUE
 			-- Convert an object `a_obj' to JSON_VALUE representation.
 		local
 			obj: ANY
