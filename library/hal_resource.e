@@ -159,7 +159,7 @@ feature -- Access
 			end
 		end
 
-	integer_field_by_key (a_key: READABLE_STRING_GENERAL): INTEGER_64
+	integer_field (a_key: READABLE_STRING_GENERAL): INTEGER_64
 			-- Return a value, if key `a_key' exists and is integer.
 		require
 			is_field_integer: is_integer_field (a_key)
@@ -168,10 +168,17 @@ feature -- Access
 				attached {INTEGER_64} field_by_key (a_key) as l_value
 			then
 				Result := l_value
+			elseif attached {INTEGER_32} field_by_key (a_key) as l_value then
+				Result := l_value
+			elseif attached {INTEGER_16} field_by_key (a_key) as l_value then
+				Result := l_value
+			elseif attached {INTEGER_8} field_by_key (a_key) as l_value then
+				Result := l_value
 			end
+
 		end
 
-	real_field_by_key (a_key: READABLE_STRING_GENERAL): REAL_64
+	real_field (a_key: READABLE_STRING_GENERAL): REAL_64
 			-- Return a value, if key `a_key' exists and is real.
 		require
 			is_field_integer: is_real_field (a_key)
@@ -180,10 +187,12 @@ feature -- Access
 				attached {REAL_64} field_by_key (a_key) as l_value
 			then
 				Result := l_value
+			elseif 	attached {REAL_32} field_by_key (a_key) as l_value then
+				Result := l_value
 			end
 		end
 
-	natural_field_by_key (a_key: READABLE_STRING_GENERAL): NATURAL_64
+	natural_field (a_key: READABLE_STRING_GENERAL): NATURAL_64
 			-- Return a value, if key `a_key' exists and is natural.
 		require
 			is_field_integer: is_natural_field (a_key)
@@ -192,10 +201,16 @@ feature -- Access
 				attached {NATURAL_64} field_by_key (a_key) as l_value
 			then
 				Result := l_value
+			elseif attached {NATURAL_32} field_by_key (a_key) as l_value then
+				Result := l_value
+			elseif attached {NATURAL_16} field_by_key (a_key) as l_value then
+				Result := l_value
+			elseif attached {NATURAL_8} field_by_key (a_key) as l_value then
+				Result := l_value
 			end
 		end
 
-	boolean_field_by_key (a_key: READABLE_STRING_GENERAL): BOOLEAN
+	boolean_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- Return a value, if key `a_key' exists and is boolean.
 		require
 			is_field_integer: is_boolean_field (a_key)
@@ -207,7 +222,7 @@ feature -- Access
 			end
 		end
 
-	string_field_by_key (a_key: READABLE_STRING_GENERAL): detachable STRING_32
+	string_field (a_key: READABLE_STRING_GENERAL): detachable STRING_32
 			-- Return a value, if key `a_key' exists and is string.
 		require
 			is_field_integer: is_string_field (a_key)
@@ -219,7 +234,7 @@ feature -- Access
 			end
 		end
 
-	object_field_by_key (a_key: READABLE_STRING_GENERAL): detachable STRING_TABLE [detachable ANY]
+	object_field (a_key: READABLE_STRING_GENERAL): detachable STRING_TABLE [detachable ANY]
 			-- Return a value, if key `a_key' exists and is an object reference.
 		require
 			is_field_integer: is_object_field (a_key)
@@ -231,7 +246,7 @@ feature -- Access
 			end
 		end
 
-	array_field_by_key (a_key: READABLE_STRING_GENERAL): detachable ARRAY [detachable ANY]
+	array_field (a_key: READABLE_STRING_GENERAL): detachable ARRAY [detachable ANY]
 			-- Return a value, if key `a_key' exists and is an array reference.
 		require
 			is_field_integer: is_array_field (a_key)
@@ -249,7 +264,9 @@ feature -- Status Report
 			-- is the field `a_key' integer?
 		do
 			if
-				attached {INTEGER_64} field_by_key (a_key)
+				attached {INTEGER_64} field_by_key (a_key) or else
+				attached {INTEGER_32} field_by_key (a_key) or else
+				attached {INTEGER_8} field_by_key (a_key)
 			then
 				Result := True
 			end
@@ -259,7 +276,8 @@ feature -- Status Report
 			-- is the field `a_key' real?
 		do
 			if
-				attached {REAL_64} field_by_key (a_key)
+				attached {REAL_64} field_by_key (a_key) or else
+				attached {REAL_32} field_by_key (a_key)
 			then
 				Result := True
 			end
@@ -269,7 +287,10 @@ feature -- Status Report
 			-- is the field `a_key' natural?
 		do
 			if
-				attached {NATURAL_64} field_by_key (a_key)
+				attached {NATURAL_64} field_by_key (a_key) or else
+				attached {NATURAL_32} field_by_key (a_key) or else
+				attached {NATURAL_16} field_by_key (a_key) or else
+				attached {NATURAL_8} field_by_key (a_key)
 			then
 				Result := True
 			end

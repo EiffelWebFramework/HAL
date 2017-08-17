@@ -153,7 +153,6 @@ feature {NONE} -- Converter implementation
 			obj: ANY
 			conv_to: JSON_REFLECTOR_SERIALIZER
 			ctx: detachable JSON_SERIALIZER_CONTEXT
-			s: STRING
 		do
 			obj := a_obj
 

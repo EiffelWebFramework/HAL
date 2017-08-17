@@ -18,17 +18,18 @@ feature {NONE} -- Initialization
 	make
 		do
 			create file_reader
-			test_json_min
-			test_json_hal
---			test_json_link
-			test_hal
-			test_item_line_item
-			test_order
-			test_hal_types
-			test_example_with_nested_objects
+--			test_json_min
+--			test_json_hal
+----			test_json_link
+--			test_hal
+--			test_item_line_item
+--			test_order
+--			test_hal_types
+--			test_example_with_nested_objects
 
---			example_from_hal_to_domain
---			test_build_hal_json
+----			example_from_hal_to_domain
+----			test_build_hal_json
+			test_hal_values
 		end
 
 	test_build_hal_json
@@ -246,20 +247,20 @@ feature {NONE} -- Initialization
 							-- expired is BOOLEAN
 						if r.is_integer_field ("expired") then
 							print ("%N")
-							print (r.integer_field_by_key ("expired").out)
+							print (r.integer_field ("expired").out)
 						end
 						if r.is_boolean_field ("expired") then
 							print ("%N")
-							print (r.boolean_field_by_key ("expired").out)
+							print (r.boolean_field ("expired").out)
 						end
 							-- Integer
 						if r.is_integer_field ("age") then
 							print ("%N")
-							print (r.integer_field_by_key ("age").out)
+							print (r.integer_field ("age").out)
 						end
 							-- Array with String table
 						if r.is_array_field ("children") then
-							if attached r.array_field_by_key ("children") as l_array then
+							if attached r.array_field ("children") as l_array then
 								across l_array as ic loop
 									print ("%N")
 									if attached ic.item as l_item then
@@ -309,6 +310,30 @@ feature {NONE} -- Initialization
 					print (jo.representation)
 				end
 			end
+		end
+
+	test_hal_values
+		local
+			l_hal: HAL_RESOURCE
+			l_int: INTEGER_64
+			l_nat: NATURAL_64
+			l_real: REAL_64
+		do
+			create l_hal.make
+			l_hal.add_field ("integer_8", {INTEGER_8}8)
+			check is_integer_8: l_hal.is_integer_field ("integer_8") end
+			l_int := l_hal.integer_field ("integer_8")
+			print ("%Nint " + l_int.out)
+
+			l_hal.add_field ("natural_8", {NATURAL}255)
+			check is_natural_8: l_hal.is_natural_field ("natural_8") end
+			l_nat := l_hal.natural_field ("natural_8")
+			print ("%Nnat " + l_nat.out)
+
+			l_hal.add_field ("real_32", {REAL}255.32)
+			check is_real_32: l_hal.is_real_field ("real_32") end
+			l_real := l_hal.real_field ("real_32")
+			print ("%Nreal " + l_real.out)
 		end
 
 feature -- Implementation

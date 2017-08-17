@@ -18,7 +18,6 @@ feature -- Conversion
 		local
 			l_list: LIST [HAL_RESOURCE]
 			js: JSON_STRING
-			l_any: detachable ANY
 			l_table: STRING_TABLE [detachable ANY]
 			l_array: ARRAY [detachable ANY]
 		do
@@ -57,7 +56,7 @@ feature -- Conversion
 								add_reference_field (j_array, l_array)
 								Result.add_array_field (js.item, l_array)
 							else
-								on_unexpected_value ("Unexpected JSON representation: [ " + j_rep.representation + " ]")
+								check known_json_value: False end
 							end
 						end
 					end
@@ -95,19 +94,6 @@ feature -- Conversion
 					end
 				end
 			end
-		end
-
-
-feature {NONE} -- Error
-
-	on_unexpected_value (a_message: READABLE_STRING_32)
-			-- Raise a developer exception with message `a_message'.s
-		local
-			err: DEVELOPER_EXCEPTION
-		do
-				-- Unexpected value
-			create err
-			err.set_description (a_message)
 		end
 
 feature {NONE} -- Converter implementation
@@ -194,7 +180,6 @@ feature {NONE} -- Converter implementation
 			js: JSON_STRING
 			l_table: STRING_TABLE [detachable ANY]
 			l_array: ARRAY [detachable ANY]
-			err: DEVELOPER_EXCEPTION
 			i: INTEGER
 		do
 			if
@@ -235,7 +220,7 @@ feature {NONE} -- Converter implementation
 								a_table.force (l_array, js.item)
 							else
 									-- Unexpected value
-								on_unexpected_value ("Unexpected JSON representation: [ " + j_rep.representation + " ]")
+								check known_json_value: False end
 							end
 						end
 					end
@@ -273,7 +258,7 @@ feature {NONE} -- Converter implementation
 							a_array.force (l_array, i)
 						else
 								-- Unexpected value
-							on_unexpected_value ("Unexpected JSON representation: [ " + ic.item.representation + " ]")
+							check known_json_value: False end
 						end
 					end
 					i := i + 1
