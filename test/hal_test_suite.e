@@ -26,17 +26,6 @@ feature {NONE} -- Events
 
 feature -- Test routines
 
-	test_invalid_hal_document
-    		--
-		local
-			l_res : detachable HAL_RESOURCE
-		do
-			l_res := json_to_hal ("min_hal_wrong_document.json")
-			if l_res = Void then
-				assert("Invalid Hal document", True)
-			end
-		end
-
 	test_valid_hal_document
     		--
 		local
