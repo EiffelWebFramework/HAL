@@ -8,5 +8,5 @@ HAL is used for exposing RESTful hypermedia APIs. Right now the current implemen
 JSON_HAL
 
 ## References
-http://tools.ietf.org/html/draft-kelly-json-hal-08
-http://stateless.co/hal_specification.html#json
+* http://tools.ietf.org/html/draft-kelly-json-hal-08
+* http://stateless.co/hal_specification.html#json
