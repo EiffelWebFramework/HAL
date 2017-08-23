@@ -23,7 +23,7 @@ install:
   - 7z x eiffel_studio.zip -oC:\projects\eiffel\ > nul
   - cmd: set ISE_C_COMPILER=msc_vc140
   - cmd: set ISE_PLATFORM=win64
-  - cmd: set ISE_EIFFEL=C:\projects\eiffel\Eiffel_17.11 
+  - cmd: set ISE_EIFFEL=C:\projects\eiffel\Eiffel_17.05 
   - cmd: set PATH=%PATH%;%ISE_EIFFEL%/studio/spec/%ISE_PLATFORM%/bin;
   - cmd: set PATH=%PATH%;%ISE_EIFFEL%/tools/spec/%ISE_PLATFORM%/bin;
   - ec -version
