@@ -20,13 +20,16 @@ feature {NONE} -- Initialization
 			create file_reader
 --			test_json_min
 --			test_json_hal
---			test_json_link
+----			test_json_link
 --			test_hal
-			test_item_line_item
-			test_order
+--			test_item_line_item
+--			test_order
+--			test_hal_types
+--			test_example_with_nested_objects
 
-			example_from_hal_to_domain
-			test_build_hal_json
+----			example_from_hal_to_domain
+----			test_build_hal_json
+			test_hal_values
 		end
 
 	test_build_hal_json
@@ -100,19 +103,19 @@ feature {NONE} -- Initialization
 							loop
 								l_res:= l_r.item_for_iteration
 
-					            if attached {STRING} l_res.fields_by_key ("currency") as l_ucs then
+					            if attached {STRING} l_res.field_by_key ("currency") as l_ucs then
 					            	l_currency := l_ucs
 					            	print ("Currency:" + l_currency)
 					            	io.put_new_line
 					            end
 
-					            if attached {STRING} l_res.fields_by_key ("status") as l_ucs then
+					            if attached {STRING} l_res.field_by_key ("status") as l_ucs then
 					            	l_status := l_ucs
 									print ("Status:" + l_status )
 									io.put_new_line
 								end
 
-								if attached {STRING} l_res.fields_by_key ("placed") as l_ucs then
+								if attached {STRING} l_res.field_by_key ("placed") as l_ucs then
 					            	l_placed := l_ucs
 					            	print ("Placed:" + l_placed )
 					            	io.put_new_line
@@ -210,6 +213,70 @@ feature {NONE} -- Initialization
 			end
 		end
 
+	test_hal_types
+		local
+			conv: JSON_HAL_RESOURCE_CONVERTER
+		do
+			create conv.make
+			if attached json_file_from ("hal_example_type.json") as json_file then
+				if attached {JSON_OBJECT} json_value_from_file (json_file) as jo then
+					if attached {HAL_RESOURCE} conv.from_json (jo) as r then
+						print (r.out)
+						print ("%N")
+						if attached conv.to_json (r) as jv then
+							print (jv.representation)
+						end
+					end
+				end
+			end
+		end
+
+	test_example_with_nested_objects
+		local
+			conv: JSON_HAL_RESOURCE_CONVERTER
+		do
+			create conv.make
+			if attached json_file_from ("exampleWithNestedObjects.json") as json_file then
+				if attached {JSON_OBJECT} json_value_from_file (json_file) as jo then
+					if attached {HAL_RESOURCE} conv.from_json (jo) as r then
+						print (r.out)
+						print ("%N")
+						if attached conv.to_json (r) as jv then
+							print (jv.representation)
+						end
+							-- expired is BOOLEAN
+						if r.is_integer_field ("expired") then
+							print ("%N")
+							print (r.integer_field ("expired").out)
+						end
+						if r.is_boolean_field ("expired") then
+							print ("%N")
+							print (r.boolean_field ("expired").out)
+						end
+							-- Integer
+						if r.is_integer_field ("age") then
+							print ("%N")
+							print (r.integer_field ("age").out)
+						end
+							-- Array with String table
+						if r.is_array_field ("children") then
+							if attached r.array_field ("children") as l_array then
+								across l_array as ic loop
+									print ("%N")
+									if attached ic.item as l_item then
+										print (l_item.out)
+									end
+
+								end
+							end
+						end
+
+					end
+				end
+			end
+		end
+
+
 	test_json_hal
 			--
 		do
@@ -243,6 +310,30 @@ feature {NONE} -- Initialization
 					print (jo.representation)
 				end
 			end
+		end
+
+	test_hal_values
+		local
+			l_hal: HAL_RESOURCE
+			l_int: INTEGER_64
+			l_nat: NATURAL_64
+			l_real: REAL_64
+		do
+			create l_hal.make
+			l_hal.add_field ("integer_8", {INTEGER_8}8)
+			check is_integer_8: l_hal.is_integer_field ("integer_8") end
+			l_int := l_hal.integer_field ("integer_8")
+			print ("%Nint " + l_int.out)
+
+			l_hal.add_field ("natural_8", {NATURAL}255)
+			check is_natural_8: l_hal.is_natural_field ("natural_8") end
+			l_nat := l_hal.natural_field ("natural_8")
+			print ("%Nnat " + l_nat.out)
+
+			l_hal.add_field ("real_32", {REAL}255.32)
+			check is_real_32: l_hal.is_real_field ("real_32") end
+			l_real := l_hal.real_field ("real_32")
+			print ("%Nreal " + l_real.out)
 		end
 
 feature -- Implementation

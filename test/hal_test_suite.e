@@ -26,17 +26,6 @@ feature {NONE} -- Events
 
 feature -- Test routines
 
-	test_invalid_hal_document
-    		--
-		local
-			l_res : detachable HAL_RESOURCE
-		do
-			l_res := json_to_hal ("min_hal_wrong_document.json")
-			if l_res = Void then
-				assert("Invalid Hal document", True)
-			end
-		end
-
 	test_valid_hal_document
     		--
 		local
@@ -200,10 +189,10 @@ feature -- Test routines
 			l_res := json_to_hal ("hal_multi_links.json")
 			assert("Not Void", l_res /= Void)
 			if attached {HAL_RESOURCE} l_res as ll_res then
-				if attached {STRING_32} ll_res.fields_by_key ("name") as l_str then
+				if attached {STRING_32} ll_res.field_by_key ("name") as l_str then
 					assert ("Expected Value: A product", l_str.is_equal ("A product"))
 				end
-				if attached {STRING_32} ll_res.fields_by_key ("weight") as l_str then
+				if attached {STRING_32} ll_res.field_by_key ("weight") as l_str then
 					assert ("Expected Value: A product", l_str.is_equal ("400"))
 				end
 			end
