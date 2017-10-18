@@ -99,6 +99,13 @@ feature -- Access
 		end
 
 	links_by_key (a_key: READABLE_STRING_GENERAL): detachable HAL_LINK
+		obsolete
+			"Use `link_by_key` [2017-11-31]"
+		do
+			Result := link_by_key (a_key)
+		end
+
+	link_by_key (a_key: READABLE_STRING_GENERAL): detachable HAL_LINK
 			-- Retrieve a link given a `a_key', ie a rel attribute if it exist,
 			-- Void in othercase
 			-- For example if you have the following JSON representation
@@ -144,7 +151,7 @@ feature -- Access
 	fields_by_key (a_key: READABLE_STRING_GENERAL): detachable READABLE_STRING_32
 			-- Return a string value, if key `a_key' exists, Void in other case.
 		obsolete
-			"Use *_field_by_key [2017-11-31]."
+			"Use `field_by_key` or `*_field` [2017-11-31]."
 		do
 			if attached {STRING_32} field_by_key (a_key) as l_value then
 				Result := l_value
@@ -164,60 +171,51 @@ feature -- Access
 		require
 			is_field_integer: is_integer_field (a_key)
 		do
-			if
-				attached {INTEGER_64} field_by_key (a_key) as l_value
-			then
+			if attached {INTEGER_64} field_by_key (a_key) as l_value then
 				Result := l_value
 			elseif attached {INTEGER_32} field_by_key (a_key) as l_value then
-				Result := l_value
+				Result := l_value.to_integer_64
 			elseif attached {INTEGER_16} field_by_key (a_key) as l_value then
-				Result := l_value
+				Result := l_value.to_integer_64
 			elseif attached {INTEGER_8} field_by_key (a_key) as l_value then
-				Result := l_value
+				Result := l_value.to_integer_64
 			end
-
 		end
 
 	real_field (a_key: READABLE_STRING_GENERAL): REAL_64
 			-- Return a value, if key `a_key' exists and is real.
 		require
-			is_field_integer: is_real_field (a_key)
+			is_field_real: is_real_field (a_key)
 		do
-			if
-				attached {REAL_64} field_by_key (a_key) as l_value
-			then
+			if attached {REAL_64} field_by_key (a_key) as l_value then
 				Result := l_value
-			elseif 	attached {REAL_32} field_by_key (a_key) as l_value then
-				Result := l_value
+			elseif attached {REAL_32} field_by_key (a_key) as l_value then
+				Result := l_value.to_double
 			end
 		end
 
 	natural_field (a_key: READABLE_STRING_GENERAL): NATURAL_64
 			-- Return a value, if key `a_key' exists and is natural.
 		require
-			is_field_integer: is_natural_field (a_key)
+			is_field_natural: is_natural_field (a_key)
 		do
-			if
-				attached {NATURAL_64} field_by_key (a_key) as l_value
-			then
+			if attached {NATURAL_64} field_by_key (a_key) as l_value then
 				Result := l_value
 			elseif attached {NATURAL_32} field_by_key (a_key) as l_value then
-				Result := l_value
+				Result := l_value.to_natural_64
 			elseif attached {NATURAL_16} field_by_key (a_key) as l_value then
-				Result := l_value
+				Result := l_value.to_natural_64
 			elseif attached {NATURAL_8} field_by_key (a_key) as l_value then
-				Result := l_value
+				Result := l_value.to_natural_64
 			end
 		end
 
 	boolean_field (a_key: READABLE_STRING_GENERAL): BOOLEAN
 			-- Return a value, if key `a_key' exists and is boolean.
 		require
-			is_field_integer: is_boolean_field (a_key)
+			is_field_boolean: is_boolean_field (a_key)
 		do
-			if
-				attached {BOOLEAN} field_by_key (a_key) as l_value
-			then
+			if attached {BOOLEAN} field_by_key (a_key) as l_value then
 				Result := l_value
 			end
 		end
@@ -225,23 +223,19 @@ feature -- Access
 	string_field (a_key: READABLE_STRING_GENERAL): detachable STRING_32
 			-- Return a value, if key `a_key' exists and is string.
 		require
-			is_field_integer: is_string_field (a_key)
+			is_field_string: is_string_field (a_key)
 		do
-			if
-				attached {READABLE_STRING_32} field_by_key (a_key) as l_value
-			then
-				Result := l_value
+			if attached {READABLE_STRING_GENERAL} field_by_key (a_key) as l_value then
+				Result := l_value.to_string_32
 			end
 		end
 
 	object_field (a_key: READABLE_STRING_GENERAL): detachable STRING_TABLE [detachable ANY]
 			-- Return a value, if key `a_key' exists and is an object reference.
 		require
-			is_field_integer: is_object_field (a_key)
+			is_field_object: is_object_field (a_key)
 		do
-			if
-				attached {STRING_TABLE [detachable ANY]} field_by_key (a_key) as l_value
-			then
+			if attached {STRING_TABLE [detachable ANY]} field_by_key (a_key) as l_value then
 				Result := l_value
 			end
 		end
@@ -249,11 +243,9 @@ feature -- Access
 	array_field (a_key: READABLE_STRING_GENERAL): detachable ARRAY [detachable ANY]
 			-- Return a value, if key `a_key' exists and is an array reference.
 		require
-			is_field_integer: is_array_field (a_key)
+			is_field_array: is_array_field (a_key)
 		do
-			if
-				attached {ARRAY [detachable ANY]} field_by_key (a_key) as l_value
-			then
+			if attached {ARRAY [detachable ANY]} field_by_key (a_key) as l_value then
 				Result := l_value
 			end
 		end
@@ -385,7 +377,7 @@ feature -- Element Change
 
 	add_fields (key: READABLE_STRING_GENERAL; value: ANY)
 		obsolete
-			"Use `add_field` [2017-06-20]."
+			"Use `add_field` [2017-06-20]. [2017-11-31]"
 		do
 			add_field (key, value)
 		end
