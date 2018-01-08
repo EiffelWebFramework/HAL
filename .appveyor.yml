@@ -18,12 +18,12 @@ install:
   - mkdir C:\projects\eiffel
   - cd C:\projects\eiffel
 
-  - set EIFFELSTUDIO_URL="https://ftp.eiffel.com/pub/beta/nightly/Eiffel_17.11_gpl_100607-win64.7z"
+  - set EIFFELSTUDIO_URL="https://ftp.eiffel.com/pub/download/17.05/Eiffel_17.05_gpl_100416-win64.7z"
   - appveyor DownloadFile %EIFFELSTUDIO_URL% -FileName eiffel_studio.zip
   - 7z x eiffel_studio.zip -oC:\projects\eiffel\ > nul
   - cmd: set ISE_C_COMPILER=msc_vc140
   - cmd: set ISE_PLATFORM=win64
-  - cmd: set ISE_EIFFEL=C:\projects\eiffel\Eiffel_17.11 
+  - cmd: set ISE_EIFFEL=C:\projects\eiffel\Eiffel_17.05 
   - cmd: set PATH=%PATH%;%ISE_EIFFEL%/studio/spec/%ISE_PLATFORM%/bin;
   - cmd: set PATH=%PATH%;%ISE_EIFFEL%/tools/spec/%ISE_PLATFORM%/bin;
   - ec -version
