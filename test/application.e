@@ -23,6 +23,8 @@ feature {NONE} -- Initialization
 			test_hal_types
 			test_example_with_nested_objects
 
+			test_embedded_hal_json
+
 			example_from_hal_to_domain
 			test_build_hal_json
 			test_hal_values
@@ -62,6 +64,53 @@ feature {NONE} -- Initialization
 				end
 			end
 		end
+
+
+	test_embedded_hal_json
+		local
+			conv: JSON_HAL_RESOURCE_CONVERTER
+			l_res: HAL_RESOURCE
+			l_link: HAL_LINK
+			l_attribute: HAL_LINK_ATTRIBUTE
+			l_items: HAL_RESOURCE
+			l_list: LIST [HAL_RESOURCE]
+		do
+			create conv.make
+			create l_attribute.make ("/orders?{id}")
+			l_attribute.set_name ("orders")
+
+			create l_res.make
+			l_res.add_curie_link (l_attribute)
+
+			create l_attribute.make ("/")
+			create l_link.make_with_attribute ("self",l_attribute )
+			l_res.add_link (l_link)
+
+			create l_attribute.make ("/pages/?{page}")
+			l_attribute.set_name ("pages")
+			create l_link.make_with_attribute ("curies",l_attribute)
+			l_res.add_link (l_link)
+
+
+			create l_items.make
+			l_items.add_integer_field ("product_id", 1)
+			l_items.add_integer_field ("count", 1)
+			create {ARRAYED_LIST[HAL_RESOURCE]} l_list.make (1)
+			l_list.force (l_items)
+			l_res.add_embedded_resources_with_key ("items", l_list)
+
+			print ("%Nis_valid_resource:" + l_res.is_valid_resource.out )
+			io.put_new_line
+			if attached conv.to_json (l_res) as j then
+				print (j.representation)
+
+				if attached conv.from_json (j) as hal then
+					print (hal)
+					print (friendly_output (hal))
+				end
+			end
+		end
+
 
 	friendly_output (obj: detachable ANY): STRING
 		local

@@ -155,6 +155,20 @@ feature -- Test routines
 			end
 		end
 
+	test_embedded_resource_by_key_array
+		local
+			l_res: detachable HAL_RESOURCE
+		do
+			l_res := json_to_hal ("exampleWithSubResource.json")
+			assert ("Not Void", l_res /= Void)
+			if l_res /= Void then
+				if attached l_res.embedded_resources_by_key ("ns:user") as l_list then
+					l_list.compare_objects
+					assert ("Number of elements 1", l_list.count = 1)
+				end
+			end
+		end
+
 	test_fields_keys
 		local
 			l_res: detachable HAL_RESOURCE

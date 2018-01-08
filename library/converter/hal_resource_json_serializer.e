@@ -54,19 +54,15 @@ feature {NONE} -- Converter implementation
 		local
 			l_result_arr: JSON_ARRAY
 		do
-			if a_resource.count = 1 then
-				Result := to_json (a_resource.first, ctx)
-			else
-				create {JSON_ARRAY} l_result_arr.make_empty
-				across
-					a_resource as ic
-				loop
-					if attached to_json (ic.item, ctx) as l_iter then
-						l_result_arr.add (l_iter)
-					end
+			create {JSON_ARRAY} l_result_arr.make_empty
+			across
+				a_resource as ic
+			loop
+				if attached to_json (ic.item, ctx) as l_iter then
+					l_result_arr.add (l_iter)
 				end
-				Result := l_result_arr
 			end
+			Result := l_result_arr
 		end
 
 	to_json_links (a_links: TABLE_ITERABLE [HAL_LINK, READABLE_STRING_GENERAL]; ctx: JSON_SERIALIZER_CONTEXT): JSON_OBJECT
