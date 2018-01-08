@@ -29,7 +29,7 @@ feature -- Convertion
 					across
 						l_fields as ic
 					loop
-						jo.put_string (ic.item, ic.key)
+						jo.put (to_json_value (ic.item), ic.key)
 					end
 				end
 				Result := jo
@@ -145,6 +145,27 @@ feature {NONE} -- Converter implementation
 				Result.put_string (l_profile, profile_key)
 			end
 
+		end
+
+	to_json_value (a_obj: detachable ANY): JSON_VALUE
+			-- Convert an object `a_obj' to JSON_VALUE representation.
+		local
+			obj: ANY
+			conv_to: JSON_REFLECTOR_SERIALIZER
+			ctx: detachable JSON_SERIALIZER_CONTEXT
+		do
+			obj := a_obj
+
+				-- Auto serialization, handling table iterable as JSON Object, and iterable as ARRAY. Without typename.
+			create conv_to
+			create ctx
+			ctx.set_pretty_printing
+			ctx.set_is_type_name_included (False)
+			ctx.set_default_serializer (create {JSON_REFLECTOR_SERIALIZER})
+			ctx.register_serializer (create {TABLE_ITERABLE_JSON_SERIALIZER [detachable ANY, READABLE_STRING_GENERAL]}, {TABLE_ITERABLE [detachable ANY, READABLE_STRING_GENERAL]})
+			ctx.register_serializer (create {ITERABLE_JSON_SERIALIZER [detachable ANY]}, {ITERABLE [detachable ANY]})
+
+			Result := conv_to.to_json (obj, ctx)
 		end
 
 feature {NONE} -- Implementation: RESOURCE

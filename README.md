@@ -1,5 +1,4 @@
-
-[![Build Status](https://travis-ci.org/jvelilla/hal.svg?branch=master)](https://travis-ci.org/jvelilla/hal) 
+[![Build Status](https://travis-ci.org/EiffelWebFramework/HAL.svg?branch=master)](https://travis-ci.org/EiffelWebFramework/HAL/)
 [![AppVeyor status](https://ci.appveyor.com/api/projects/status/01094sp8soowwpku?svg=true)](https://ci.appveyor.com/project/jvelilla/hal-gahly)
 
 Eiffel HAL is a library to work with  http://stateless.co/hal_specification.html#json
